@@ -5,7 +5,7 @@ import (
 	"database/sql/driver"
 )
 
-//github.com/go-sql-driver/mysql/driver.go
+//github.com/go-sql-driver/mysql/driver.go 的伪代码
 func init() {
 	sql.Register("mysql", &MySQLDriver{})
 }
