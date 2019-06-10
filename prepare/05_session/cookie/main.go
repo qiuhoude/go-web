@@ -13,7 +13,7 @@ func main() {
 }
 func SetCookie(w http.ResponseWriter, r *http.Request) {
 	//设置cookie
-	cookie := http.Cookie{Name: "name", Value: "hanru", Path: "/", MaxAge: 5}
+	cookie := http.Cookie{Name: "name", Value: "hanru", Path: "/", Session: 5}
 	http.SetCookie(w, &cookie)
 	io.WriteString(w, "write cookie ok")
 
