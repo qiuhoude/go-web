@@ -1,3 +1,4 @@
+// sql扩展包
 package demo2_mysql
 
 import (
@@ -29,6 +30,7 @@ func run() {
 		fmt.Println("Select error", err)
 	}
 	fmt.Printf("this is Select res:%v\n", users)
+
 	//var user User
 	//err1 := Db.Get(&user, "SELECT uid,username,departname,created FROM userinfo where uid = ?", 1)
 	//if err1 != nil {
