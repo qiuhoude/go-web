@@ -67,18 +67,18 @@ func (m *Manager) SessionStart(rw http.ResponseWriter, req *http.Request) Sessio
 	if err != nil || cookie.Value == "" { // 获取出错,或者值为nil就重新设置cookie
 		sid := m.sessionId()
 		cookie := http.Cookie{
-			Name:     m.cookieName,
-			Value:    url.QueryEscape(sid),
-			Path:     "/",
-			MaxAge:   int(m.maxLifeTime),
-			HttpOnly: true,
+			Name:  m.cookieName,
+			Value: url.QueryEscape(sid),
+			Path:  "/",
+			//MaxAge:   int(m.maxLifeTime),
+			HttpOnly: true, //这个属性是设置是否可通过客户端脚本访问这个设置的cookie
 		}
 		http.SetCookie(rw, &cookie)
 		session, _ := m.provider.SessionInit(sid)
 		return session
 	} else {
 		sid, _ := url.QueryUnescape(cookie.Value)
-		session, _ := m.provider.SessionInit(sid)
+		session, _ := m.provider.SessionRead(sid)
 		return session
 	}
 }
@@ -103,7 +103,11 @@ func (m *Manager) SessionDestroy(rw http.ResponseWriter, req *http.Request) {
 	}
 }
 
-// 过期回收
+func (m *Manager) CookieName() string {
+	return m.cookieName
+}
+
+// 过期回收,每间隔 maxLifeTime 时间就来清理一次session
 func (m *Manager) GC() {
 	m.lock.Lock()
 	defer m.lock.Unlock()

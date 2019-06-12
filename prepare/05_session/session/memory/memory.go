@@ -35,6 +35,7 @@ func (pder *Provider) SessionInit(sid string) (session.Session, error) {
 	pder.sessions[sid] = element
 	return newsess, nil
 }
+
 func (pder *Provider) SessionRead(sid string) (session.Session, error) {
 	if element, ok := pder.sessions[sid]; ok {
 		return element.Value.(*SessionStore), nil
@@ -46,6 +47,9 @@ func (pder *Provider) SessionRead(sid string) (session.Session, error) {
 }
 
 func (pder *Provider) SessionDestroy(sid string) error {
+	pder.lock.Lock()
+	defer pder.lock.Unlock()
+
 	if element, ok := pder.sessions[sid]; ok {
 		delete(pder.sessions, sid)
 		pder.list.Remove(element)
@@ -60,21 +64,25 @@ func (pder *Provider) SessionGC(maxlifetime int64) {
 
 	for {
 		element := pder.list.Back()
-		if element == nil {
+		if element == nil { // 从link 后往前找, list是个双端列表 root element持有首端和尾端
 			break
 		}
 		if (element.Value.(*SessionStore).timeAccessed.Unix() + maxlifetime) < time.Now().Unix() {
+			// 最后一次访问session时间 + 最大存活时间 < 现在时间 ;说明session过期了进行移除
 			pder.list.Remove(element)
 			delete(pder.sessions, element.Value.(*SessionStore).sid)
 		} else {
 			break
 		}
+
 	}
 }
 
+// 更新最后一次访问时间
 func (pder *Provider) SessionUpdate(sid string) error {
 	pder.lock.Lock()
 	defer pder.lock.Unlock()
+
 	if element, ok := pder.sessions[sid]; ok {
 		element.Value.(*SessionStore).timeAccessed = time.Now()
 		pder.list.MoveToFront(element)
