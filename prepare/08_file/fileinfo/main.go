@@ -6,7 +6,7 @@ import (
 )
 
 func main() {
-	fileInfo, err := os.Stat("main.go")
+	fileInfo, err := os.Stat("unsafe_test.go")
 	if err != nil {
 		fmt.Println(err)
 		return

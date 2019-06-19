@@ -76,6 +76,28 @@ func main() {
 		//io.Copy(c.Writer, file)
 	})
 
+	router.GET("/uploads", func(c *gin.Context) {
+		t := template.Must(template.ParseFiles("static/files.html"))
+		t.Execute(c.Writer, nil)
+	})
+
+	router.POST("/uploads", func(c *gin.Context) {
+		form, err := c.MultipartForm()
+		if err != nil {
+			c.String(http.StatusBadRequest, fmt.Sprintf("get form err: %s", err.Error()))
+			return
+		}
+		files := form.File["files"]
+
+		for _, file := range files {
+			if err := c.SaveUploadedFile(file, file.Filename); err != nil {
+				c.String(http.StatusBadRequest, fmt.Sprintf("upload file err: %s", err.Error()))
+				return
+			}
+		}
+		c.String(http.StatusOK, fmt.Sprintf("Uploaded successfully %d files ", len(files)))
+	})
+
 	// 自定义服务器
 	s := &http.Server{
 		Addr:           ":8000",
