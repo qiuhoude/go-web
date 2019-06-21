@@ -107,11 +107,11 @@ func queryOne() {
 		username, departname, created string
 	)
 	/*
-	   	row：Scan()-->将查询的结果从row取出
-		   err对象
-		   判断err是否为空，
-			   为空，查询有结果，数据可以成功取出,如果是多条数据就是取第1条
-			   不为空，没有数据，sql: no rows in result set
+		   	row：Scan()-->将查询的结果从row取出
+			   err对象
+			   判断err是否为空，
+				   为空，查询有结果，数据可以成功取出,如果是多条数据就是取第1条
+				   不为空，没有数据，sql: no rows in result set
 	*/
 	err = row.Scan(&uid, &username, &departname, &created)
 	if err != nil {
@@ -216,5 +216,90 @@ func transaction() {
 		tx.Rollback()
 		fmt.Println("操作失败。。。回滚。。")
 	}
-
 }
+
+func queryAllDb() {
+	db, err := sql.Open("mysql", "root:root@tcp(127.0.0.1:3306)/honor_ini?charset=utf8")
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+	// select table_name from information_schema.tables;
+	// show tables;
+	rows, err := db.Query("SHOW TABLES")
+	if err != nil {
+		fmt.Println("查询出错 -> ", err)
+		return
+	}
+	//读出查询出的列字段名
+	var tableNames []string
+	for rows.Next() {
+		var tname string
+		rows.Scan(&tname)
+		tableNames = append(tableNames, tname)
+	}
+	rows.Close()
+	for _, tname := range tableNames {
+		queryDataByTable(tname, db)
+	}
+}
+
+type TableData struct {
+	columns *[]string // 表头
+	data    *[][]byte // 数据
+}
+
+func queryDataByTable(tname string, db *sql.DB) {
+	rows, err := db.Query("select * from " + tname)
+	if err != nil {
+		fmt.Println(tname, "表查询出错 -> ", err.Error())
+		return
+	}
+	defer rows.Close()
+
+	//读出查询出的列字段名
+	cols, _ := rows.Columns()
+	//values是每个列的值，这里获取到byte里
+	values := make([][]byte, len(cols))
+	//query.Scan的参数，因为每次查询出来的列是不定长的，用len(cols)定住当次查询的长度
+	scans := make([]interface{}, len(cols))
+	//让每一行数据都填充到[][]byte里面
+	for i := range values {
+		scans[i] = &values[i]
+	}
+	//最后得到的map
+	results := make(map[int]map[string]string)
+	i := 0
+	for rows.Next() { //循环，让游标往下推
+		if err := rows.Scan(scans...); err != nil { //query.Scan查询出来的不定长值放到scans[i] = &values[i],也就是每行都放在values里
+			fmt.Println(err)
+			return
+		}
+
+		row := make(map[string]string) //每行数据
+
+		for k, v := range values { //每行数据是放在values里面，现在把它挪到row里
+			key := cols[k]
+			row[key] = string(v)
+		}
+		results[i] = row //装入结果集中
+		i++
+	}
+
+	//查询出来的数组
+	for k, v := range results {
+		fmt.Println(k, v)
+	}
+	//fmt.Println(tname + " 表 查询完成")
+}
+
+//func formatToLua(data *TableData) string {
+//	var b strings.Builder
+//	b.WriteString("return {\n")
+//	// 拼接头部
+//
+//
+//
+//
+//	b.WriteString("}")
+//}
