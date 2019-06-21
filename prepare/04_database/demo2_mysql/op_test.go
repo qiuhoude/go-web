@@ -1,8 +1,9 @@
 package demo2_mysql
 
 import (
-	"errors"
+	"bytes"
 	"os"
+	"strconv"
 	"testing"
 	"text/template"
 )
@@ -35,62 +36,62 @@ func TestQueryAllDb(t *testing.T) {
 }
 
 type lua struct {
-	Title []string
+	Title []interface{}
 	Data  interface{}
 }
 
 func TestTemplate(t *testing.T) {
 	const mm = `
-return {
-	title={ {{- range $i,$d:= .Title -}} {{- if (eq $i 0) -}},"{{- $d -}}" {{- else -}}"{{- $d -}}" {{ end -}} {{- end -}} },
-		records={
+	return {
+		title={ {{strupper .Title}} },
+			records={
 				
-		}
-}
+			}
+	}
 `
+	d := []string{"id", "activityId", "time", "xixi"}
+	var dataArr []interface{}
+	dataArr = append(dataArr, 66)
+	for _, v := range d {
+		dataArr = append(dataArr, v)
+	}
+	dataArr = append(dataArr, 66)
+	dataArr = append(dataArr, 45)
+
 	data := lua{
-		Title: []string{"id", "activityId", "time"},
+		Title: dataArr,
 	}
 
 	var fmap = template.FuncMap{
-		"sequence": sequenceFunc,
-		"cycle":    cycleFunc,
+		"strupper": func(ss []interface{}) string {
+			var b bytes.Buffer
+			l := len(ss)
+			for i, s := range ss {
+				switch s.(type) {
+				case string:
+					if i == l-1 {
+						b.WriteString("\"")
+						b.WriteString(s.(string))
+						b.WriteString("\"")
+					} else {
+						b.WriteString("\"")
+						b.WriteString(s.(string))
+						b.WriteString("\",")
+					}
+				case int:
+					if i == l-1 {
+						b.WriteString(strconv.Itoa(s.(int)))
+					} else {
+						b.WriteString(strconv.Itoa(s.(int)) + ",")
+					}
+				}
+			}
+			return b.String()
+		},
 	}
-
-	tp := template.New("lua").Funcs(fmap)
+	tp := template.New("").Funcs(fmap)
 	//tp.Delims("{{", "}}")
 	tp = template.Must(tp.Parse(mm))
 
 	tp.Execute(os.Stdout, data)
-}
-
-type generator struct {
-	ss []string
-	i  int
-	f  func(s []string, i int) string
-}
-
-func sequenceGen(ss []string, i int) string {
-	if i >= len(ss) {
-		return ss[len(ss)-1]
-	}
-	return ss[i]
-}
-
-func cycleGen(ss []string, i int) string {
-	return ss[i%len(ss)]
-}
-
-func sequenceFunc(ss ...string) (*generator, error) {
-	if len(ss) == 0 {
-		return nil, errors.New("sequence must have at least one element")
-	}
-	return &generator{ss, 0, sequenceGen}, nil
-}
-
-func cycleFunc(ss ...string) (*generator, error) {
-	if len(ss) == 0 {
-		return nil, errors.New("cycle must have at least one element")
-	}
-	return &generator{ss, 0, cycleGen}, nil
 }
