@@ -1,6 +1,6 @@
 $(document).ready(function () {
     //注册
-    $("register-form").validate({
+    $("#register-form").validate({
         rules: {
             username: {
                 required: true,
@@ -34,22 +34,23 @@ $(document).ready(function () {
         submitHandler: function (form) {
             var urlStr = "/register";
             // alert("urlStr:"+urlStr)
+            console.info("urlStr:" + urlStr)
             $(form).ajaxSubmit({
                 url: urlStr,
                 type: "post",
                 dataType: "json",
                 success: function (data, status) {
-                    alert("data:" + data.message)
+                    // alert("data:" + data.message)
                     if (data.code == 1) {
                         setTimeout(function () {
                             window.location.href = "/login"
                         }, 1000)
                     }
                 },
-                err: function (data, status) {
+                error: function (data, status) {
                     alert("err:" + data.message + ":" + status)
                 }
-            })
+            });
         }
     });
 
@@ -78,7 +79,8 @@ $(document).ready(function () {
         },
         submitHandler: function (form) {
             var urlStr = "/login"
-            alert("urlStr:" + urlStr)
+            // alert("urlStr:" + urlStr)
+            console.info("urlStr:" + urlStr)
             $(form).ajaxSubmit({
                 url: urlStr,
                 type: "post",
@@ -126,22 +128,21 @@ $(document).ready(function () {
             }
         },
         submitHandler: function (form) {
-            alert("hello")
             var urlStr = "/article/add";
             //判断文章id确定提交的表单的服务器地址
             //若id大于零，说明是修改文章
             var artId = $("#write-article-id").val();
-            alert("artId:" + artId);
+            console.log("artId:" + artId)
             if (artId > 0) {
                 urlStr = "/article/update"
             }
-            alert("urlStr:" + urlStr);
+            console.log("urlStr:" + urlStr);
             $(form).ajaxSubmit({
                 url: urlStr,
                 type: "post",
                 dataType: "json",
                 success: function (data, status) {
-                    alert(":data:" + data.message);
+                    console.log(":data:" + data.message);
                     setTimeout(function () {
                         window.location.href = "/"
                     }, 1000)
@@ -186,4 +187,5 @@ $(document).ready(function () {
             }
         })
     })
+
 });
