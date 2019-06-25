@@ -5,6 +5,7 @@ import (
 	"fmt"
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/qiuhoude/go-web/blogweb_gin/logs"
+	"regexp"
 )
 
 const (
@@ -39,9 +40,16 @@ func InitMsql() {
 	}
 }
 
+var re = regexp.MustCompile(`\?`)
+
+func showSql(sql string, args ...interface{}) {
+	showSql := re.ReplaceAllString(sql, "%v") + "\n"
+	logs.Info.Printf(showSql, args...)
+}
+
 //操作数据库
 func ModifyDB(sql string, args ...interface{}) (int64, error) {
-	logs.Info.Println(sql)
+	showSql(sql, args...)
 	result, err := db.Exec(sql, args...)
 	if err != nil {
 		logs.Error.Println(err)
@@ -57,11 +65,13 @@ func ModifyDB(sql string, args ...interface{}) (int64, error) {
 
 // 查询单条
 func QueryRowDb(sql string, args ...interface{}) *sql.Row {
+	showSql(sql, args...)
 	return db.QueryRow(sql, args...)
 }
 
 // 查询多条
 func QueryDb(sql string, args ...interface{}) (*sql.Rows, error) {
+	showSql(sql, args...)
 	return db.Query(sql, args...)
 }
 

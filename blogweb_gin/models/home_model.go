@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"fmt"
 	"github.com/qiuhoude/go-web/blogweb_gin/config"
-	"github.com/qiuhoude/go-web/blogweb_gin/logs"
 	"github.com/qiuhoude/go-web/blogweb_gin/utils"
 	"html/template"
 	"strconv"
@@ -52,12 +51,12 @@ func MakeHomeBlocks(articles []Article, isLogin bool) template.HTML {
 		homeParam.Id = art.Id
 		homeParam.Title = art.Title
 		homeParam.Tags = createTagsLinks(art.Tags)
-		fmt.Println("tag-->", art.Tags)
+		//logs.Info.Println("tag-->", art.Tags)
 		homeParam.Short = art.Short
 		homeParam.Content = art.Content
 		homeParam.Author = art.Author
 		homeParam.CreateTime = utils.SwitchTimeStampToData(art.Createtime)
-		homeParam.Link = "/show/" + strconv.Itoa(art.Id)
+		homeParam.Link = "/article/show/" + strconv.Itoa(art.Id)
 		homeParam.UpdateLink = "/article/update?id=" + strconv.Itoa(art.Id)
 		homeParam.DeleteLink = "/article/delete?id=" + strconv.Itoa(art.Id)
 		homeParam.IsLogin = isLogin
@@ -70,7 +69,7 @@ func MakeHomeBlocks(articles []Article, isLogin bool) template.HTML {
 		t.Execute(&buffer, homeParam)
 		htmlHome += buffer.String()
 	}
-	logs.Info.Println("htmlHome-->", htmlHome)
+	//logs.Info.Println("htmlHome-->", htmlHome)
 	return template.HTML(htmlHome)
 }
 

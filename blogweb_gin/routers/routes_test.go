@@ -19,5 +19,5 @@ func TestInitRouter(t *testing.T) {
 
 	assert.Equal(t, 200, rw.Code)
 	t.Log(rw.Body.String())
-	//assert.Equal(t, "pong", rw.Body.String())
+	assert.Equal(t, "pong", rw.Body.String())
 }

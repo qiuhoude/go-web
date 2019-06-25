@@ -43,3 +43,12 @@ func IsLoginMiddle(c *gin.Context) {
 	}
 	c.Next()
 }
+
+// 需要登陆才能操作的中间件
+func NeedLoginMiddle(c *gin.Context) {
+	if !GetSession(c) {
+		c.Redirect(http.StatusMovedPermanently, "/login")
+		return
+	}
+	c.Next()
+}

@@ -179,7 +179,7 @@ $(document).ready(function () {
                 if (data.code == 1) {
                     setTimeout(function () {
                         window.location.href = "/album"
-                    }, 1000)
+                    }, 500)
                 }
             },
             error: function (data, status) {

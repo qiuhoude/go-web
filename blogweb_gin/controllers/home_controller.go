@@ -1,8 +1,8 @@
 package controllers
 
 import (
-	"fmt"
 	"github.com/gin-gonic/gin"
+	"github.com/qiuhoude/go-web/blogweb_gin/logs"
 	"github.com/qiuhoude/go-web/blogweb_gin/models"
 	"net/http"
 	"strconv"
@@ -17,7 +17,7 @@ func HomeGet(c *gin.Context) {
 	islogin := GetSession(c)
 
 	tag := c.Query("tag")
-	fmt.Println("tag:", tag)
+	logs.Info.Println("tag:", tag)
 	page, _ := strconv.Atoi(c.Query("page"))
 
 	var hasFooter bool

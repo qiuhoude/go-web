@@ -15,14 +15,14 @@
 <div id="main">
     <form id="write-art-form" method="post">
         <div>标题</div>
-        <input type="text" placeholder="请输入标题" name="title">
+        <input type="text" placeholder="请输入标题" name="title" value="{{.Title}}">
         <div>标签</div>
-        <input type="text" placeholder="请输入标签" name="tags">
+        <input type="text" placeholder="请输入标签" name="tags" value="{{.Tags}}">
         <div>简介</div>
-        <textarea placeholder="请输入简介" name="short"></textarea>
+        <textarea placeholder="请输入简介" name="short">{{.Short}}</textarea>
         <div>内容</div>
-        <textarea id="content" placeholder="请输入内容" name="content"></textarea>
-        <input id="write-article-id" hidden name="id">
+        <textarea id="content" placeholder="请输入内容" name="content">{{.Content}}</textarea>
+        <input id="write-article-id" hidden name="id" value="{{.Id}}">
         <br>
         <button type="button" onclick="history.back()">返回</button>
         <button type="submit" id="write-art-submit">提交</button>

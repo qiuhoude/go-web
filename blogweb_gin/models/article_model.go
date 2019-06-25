@@ -99,7 +99,7 @@ func GetArticleRowsNum() int {
 	rwLock.RLock()
 	defer rwLock.RUnlock()
 	if artcileRowsNum == -1 {
-		SetArticleRowsNum()
+		artcileRowsNum = QueryArticleRowNum()
 	}
 	return artcileRowsNum
 }
@@ -178,6 +178,6 @@ func QueryArticlesWithTag(tag string) ([]Article, error) {
 	sql += " or tags like '%&" + tag + "'"
 	sql += " or tags like '" + tag + "&%'"
 	sql += " or tags like '" + tag + "'"
-	fmt.Println(sql)
+	logs.Info.Println(sql)
 	return QueryArticlesWithCon(sql)
 }

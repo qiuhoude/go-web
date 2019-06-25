@@ -35,9 +35,27 @@ func InitRouter() *gin.Engine {
 		// 路由组
 		v1 := router.Group("/article")
 		{
-			v1.GET("/add", controllers.AddArticleGet)
-			v1.POST("/add", controllers.AddArticlePost)
+			//添加文章
+			v1.GET("/add", controllers.NeedLoginMiddle, controllers.AddArticleGet)
+			v1.POST("/add", controllers.NeedLoginMiddle, controllers.AddArticlePost)
+
+			// 显示文章
+			v1.GET("/show/:id", controllers.ShowArticleGet)
+
+			//更新文章
+			v1.GET("/update", controllers.NeedLoginMiddle, controllers.UpdateArticleGet)
+			v1.POST("/update", controllers.NeedLoginMiddle, controllers.UpdateArticlePost)
+
+			//删除文章
+			v1.GET("/delete", controllers.NeedLoginMiddle, controllers.DeleteArticleGet)
 		}
+		router.GET("/tags", controllers.TagsGet)
+
+		router.GET("/album", controllers.AlbumGet)
+		// 文件上传
+		router.POST("/upload", controllers.UpladPost)
+		//关于我
+		router.GET("/aboutme", controllers.AboutMeGet)
 	}
 	return router
 }
