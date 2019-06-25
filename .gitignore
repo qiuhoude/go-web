@@ -10,7 +10,7 @@
 .idea/**/dictionaries
 .idea/**/shelf
 /.idea
-blogweb_gin/logs/
+blogweb_gin/logdir/
 
 # Sensitive or high-churn files
 .idea/**/dataSources/
