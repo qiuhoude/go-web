@@ -84,7 +84,9 @@ func QueryArticlesWithCon(sql string) ([]Article, error) {
 
 //存储表的行数， 当文章新增或者删除时需要更新这个值
 var artcileRowsNum int = -1
-var rwLock sync.RWMutex
+var rwmu sync.RWMutex // 读写锁
+
+var once sync.Once // 只会执行一次
 
 //查询文章的总条数
 func QueryArticleRowNum() int {
@@ -94,20 +96,39 @@ func QueryArticleRowNum() int {
 	return num
 }
 
-//只有首次获取行数的时候采取统计表里的行数
+// 获取
 func GetArticleRowsNum() int {
-	rwLock.RLock()
-	defer rwLock.RUnlock()
-	if artcileRowsNum == -1 {
-		artcileRowsNum = QueryArticleRowNum()
-	}
+	// 先获取读锁
+	//rwmu.RLock()
+	//if artcileRowsNum != -1 {
+	//	rwmu.RUnlock()
+	//	return artcileRowsNum
+	//}
+	//rwmu.RUnlock()
+	//
+
+	// 如果没有初始化就获取一遍初始化
+	//rwmu.Lock()
+	//if artcileRowsNum == -1 {
+	//	loadArtcileRowsNum()
+	//}
+	//rwmu.Unlock()
+
+	// 只会执行一次
+	once.Do(loadArtcileRowsNum)
+	rwmu.RLock()
+	defer rwmu.RUnlock()
 	return artcileRowsNum
 }
 
 //设置页数
 func SetArticleRowsNum() {
-	rwLock.Lock()
-	defer rwLock.Unlock()
+	rwmu.Lock()
+	defer rwmu.Unlock()
+	loadArtcileRowsNum()
+}
+
+func loadArtcileRowsNum() {
 	artcileRowsNum = QueryArticleRowNum()
 }
 
