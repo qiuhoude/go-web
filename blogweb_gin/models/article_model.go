@@ -88,6 +88,8 @@ var rwmu sync.RWMutex // 读写锁
 
 var once sync.Once // 只会执行一次
 
+//var a = expvar.NewInt()
+
 //查询文章的总条数
 func QueryArticleRowNum() int {
 	row := database.QueryRowDb("select count(id) from article")
