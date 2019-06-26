@@ -1,3 +1,7 @@
+
+### 单服伪集群
+
+```sh
 #!/bin/sh
 
 TOKEN=token-01
@@ -48,3 +52,4 @@ nohup /opt/etcd-v3.3.13-linux-amd64/etcd --data-dir=${THIS_NAME}".etcd" --name $
     --discovery ${DISCOVERY} \
     --initial-cluster-state ${CLUSTER_STATE} --initial-cluster-token ${TOKEN} >> ${THIS_NAME}".nohup" &
 echo "启动"${NAME_3}"成功"
+```
