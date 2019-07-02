@@ -1,6 +1,9 @@
 package main
 
-import "log"
+import (
+	"fmt"
+	"log"
+)
 
 func init() {
 	log.SetPrefix("【debug】")
@@ -10,6 +13,10 @@ func init() {
 func main() {
 	log.Println("haha") // 会调用std.Output ,向控制台输出
 
+	//b := []byte(nil)
+	aa := fmt.Sprintf(`%v`, nil)
+	fmt.Println(aa)
+
 	// Println writes to the standard logger.
 	log.Println("message")
 
@@ -18,4 +25,5 @@ func main() {
 
 	// Panicln is Println() followed by a call to panic().
 	log.Panicln("panic message")
+
 }

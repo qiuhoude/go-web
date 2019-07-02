@@ -245,8 +245,13 @@ func queryAllDb() {
 }
 
 type TableData struct {
-	columns *[]string // 表头
+	columns []string  // 表头
 	data    *[][]byte // 数据
+}
+
+type Ts struct {
+	ColumnName string
+	Value      interface{}
 }
 
 func queryDataByTable(tname string, db *sql.DB) {
@@ -277,8 +282,8 @@ func queryDataByTable(tname string, db *sql.DB) {
 		}
 
 		row := make(map[string]string) //每行数据
+		for k, v := range values {     //每行数据是放在values里面，现在把它挪到row里
 
-		for k, v := range values { //每行数据是放在values里面，现在把它挪到row里
 			key := cols[k]
 			row[key] = string(v)
 		}

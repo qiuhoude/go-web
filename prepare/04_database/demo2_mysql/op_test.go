@@ -74,9 +74,9 @@ func TestTemplate(t *testing.T) {
 						b.WriteString(s.(string))
 						b.WriteString("\"")
 					} else {
-						b.WriteString("\"")
+						b.WriteString(`"`)
 						b.WriteString(s.(string))
-						b.WriteString("\",")
+						b.WriteString(`",`)
 					}
 				case int:
 					if i == l-1 {
