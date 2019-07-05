@@ -16,6 +16,9 @@ func main() {
 	fmt.Println(f1())
 	fmt.Println(f2())
 	fmt.Println(f3())
+	fmt.Println(doubleScore(0))    //0
+	fmt.Println(doubleScore(20.0)) //40
+	fmt.Println(doubleScore(50.0)) //50
 }
 
 func f1() (result int) {
@@ -72,3 +75,16 @@ func f3() (r int) {
 }
 
 */
+
+func doubleScore(source float32) (score float32) {
+	defer func() {
+		if score < 1 || score >= 100 {
+			//将影响返回值
+			score = source
+		}
+	}()
+	score = source * 2
+	return
+	//或者
+	//return source * 2
+}

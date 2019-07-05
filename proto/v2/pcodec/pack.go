@@ -11,6 +11,13 @@ type Package struct {
 	PbMsg  []byte // pb协议信息
 }
 
+func NewPack(data *[]byte) *Package {
+	return &Package{
+		Length: int32(len(*data)),
+		PbMsg:  *data,
+	}
+}
+
 // 打包
 func (p *Package) Pack(writer io.Writer) error {
 	var err error

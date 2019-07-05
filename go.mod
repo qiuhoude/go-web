@@ -33,6 +33,7 @@ require (
 	github.com/kisielk/errcheck v1.2.0 // indirect
 	github.com/lib/pq v1.1.1 // indirect
 	github.com/mattn/go-isatty v0.0.8 // indirect
+	github.com/pkg/errors v0.8.0
 	github.com/prometheus/client_golang v0.9.3 // indirect
 	github.com/prometheus/common v0.4.0
 	github.com/russross/blackfriday v1.5.2

@@ -8,11 +8,11 @@ import (
 
 func ioutilDemo() {
 	/*
-	   ioutil包：
-		   ReadFile()
-		   WriteFile()
-		   ReadDir()
-		   ..
+		   ioutil包：
+			   ReadFile()
+			   WriteFile()
+			   ReadDir()
+			   ..
 	*/
 
 	//1.读取文件中的所有的数据

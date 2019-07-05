@@ -13,15 +13,15 @@ func TestBufioDemo(t *testing.T) {
 func bufioDemo() {
 
 	/*
-	   bufio:高效io读写
-		   buffer缓存
-		   io：input/output
+		   bufio:高效io读写
+			   buffer缓存
+			   io：input/output
 
-	   将io包下的Reader，Write对象进行包装，带缓存的包装，提高读写的效率
+		   将io包下的Reader，Write对象进行包装，带缓存的包装，提高读写的效率
 
-		   ReadBytes()
-		   ReadString()
-		   ReadLine()
+			   ReadBytes()
+			   ReadString()
+			   ReadLine()
 
 	*/
 
