@@ -57,6 +57,7 @@ func TestJsonToPb(t *testing.T) {
 	}
 
 	dataJ, err := json.Marshal(oldStruct)
+
 	if err != nil {
 		t.Fatal(err)
 	}
