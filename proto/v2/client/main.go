@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"github.com/gogo/protobuf/proto"
 	"github.com/qiuhoude/go-web/proto/v2/models"
+	"io"
 	"net"
 	"os"
 	"time"
@@ -21,9 +22,10 @@ func main() {
 	strIP := "127.0.0.1:9201"
 	var conn net.Conn
 	var err error
+	addr, err := net.ResolveTCPAddr("tcp", strIP)
 
 	//连接服务器
-	for conn, err = net.Dial("tcp", strIP); err != nil; conn, err = net.Dial("tcp", strIP) {
+	for conn, err = net.DialTCP("tcp", nil, addr); err != nil; conn, err = net.Dial("tcp", strIP) {
 		fmt.Println("connect", strIP, "fail")
 		time.Sleep(time.Second)
 		fmt.Println("reconnect...")
@@ -33,7 +35,7 @@ func main() {
 
 	writer := bufio.NewWriter(conn)
 	// 开个协程进行读数据
-	go recvMsg(&conn)
+	go recvMsg(conn)
 
 	sendbegin(writer)
 	time.AfterFunc(3*time.Second, func() {
@@ -98,12 +100,15 @@ func sendMsg(writer *bufio.Writer, data []byte) error {
 	return err
 }
 
-func recvMsg(conn *net.Conn) {
-	reader := bufio.NewReader(*conn)
+func recvMsg(conn net.Conn) {
+	reader := bufio.NewReader(conn)
 	for {
-		(*conn).SetReadDeadline(time.Now().Add(3 * time.Minute))
+		conn.SetReadDeadline(time.Now().Add(3 * time.Minute))
 		lengthByte, err := reader.Peek(lengthSize)
 		if err != nil {
+			if err == io.EOF {
+				fmt.Printf("远程链接：%s已经关闭！\n", conn.RemoteAddr().String())
+			}
 			break
 		}
 		lengthBuff := bytes.NewBuffer(lengthByte)
@@ -122,7 +127,7 @@ func recvMsg(conn *net.Conn) {
 		reader.Read(packBytes)
 		proto.Unmarshal(packBytes, basePb)
 		fmt.Println(basePb)
-		(*conn).SetReadDeadline(time.Time{})
+		conn.SetReadDeadline(time.Time{})
 	}
 	fmt.Println("读协程死掉了")
 }

@@ -64,15 +64,20 @@ func TestJsonToPb(t *testing.T) {
 	extMap := proto.RegisteredExtensions((*models.Base)(nil))
 	extensionDescPrt := extMap[6021]
 
-	//newStruct := newStruct(reflect.TypeOf(extensionDescPrt.ExtensionType).Elem())
+	newStruct := NewStruct(reflect.TypeOf(extensionDescPrt.ExtensionType))
 
-	var fields []reflect.StructField
-	etype := reflect.TypeOf(extensionDescPrt.ExtensionType).Elem()
-	for i := 0; i < etype.NumField(); i++ {
-		fields = append(fields, etype.Field(i))
-	}
+	//var fields []reflect.StructField
+	//etype := reflect.TypeOf(extensionDescPrt.ExtensionType).Elem()
+	//for i := 0; i < etype.NumField(); i++ {
+	//	fields = append(fields, etype.Field(i))
+	//}
+	//
+	//newStruct := CreateStruct(fields)
+	nullstruct := &models.CrossMoveCityRq{}
+	fmt.Println("--value ", reflect.ValueOf(nullstruct).Elem().Type())
+	fmt.Println("--type ", reflect.TypeOf(extensionDescPrt.ExtensionType).Elem())
 
-	newStruct := CreateStruct(fields)
+	//newStruct := reflect.New(reflect.TypeOf(extensionDescPrt.ExtensionType).Elem()).Interface().(proto.Message)
 
 	fmt.Printf("newStruct %T %v\n", newStruct, newStruct)
 
@@ -91,9 +96,9 @@ func CreateStruct(fields []reflect.StructField) interface{} {
 	return so.Interface()
 }
 
-func newStruct(t reflect.Type) interface{} {
+func NewStruct(t reflect.Type) proto.Message {
 	// 只能创建一个map
-	return reflect.New(t).Elem().Interface()
+	return reflect.New(t.Elem()).Interface().(proto.Message)
 }
 
 func TestProto(t *testing.T) {
