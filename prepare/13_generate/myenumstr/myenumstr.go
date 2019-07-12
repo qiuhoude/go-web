@@ -125,6 +125,7 @@ func genString(types map[string][]string) []byte {
 	if pkgName == "" {
 		pkgName = pkgInfo.Name
 	}
+
 	data := map[string]interface{}{
 		"pkg":   pkgName,
 		"types": types,
