@@ -129,3 +129,52 @@ func TestProto(t *testing.T) {
 	fmt.Println(descV1.Field)
 
 }
+
+func Test1(t *testing.T) {
+	l1 := numToList(10000000000001)
+	l2 := numToList(564)
+
+	t.Log(listToNum(addTwoNumbers(l1, l2)))
+}
+
+type ListNode struct {
+	Val  int
+	Next *ListNode
+}
+
+func addTwoNumbers(l1 *ListNode, l2 *ListNode) *ListNode {
+	s := listToNum(l1) + listToNum(l2)
+	return numToList(s)
+}
+
+func numToList(num int) *ListNode {
+	var rtl *ListNode
+	var nl *ListNode
+	h := &ListNode{Val: 0}
+	s := num
+
+	for ; s != 0; s /= 10 {
+		c := s % 10
+		if rtl == nil {
+			h = &ListNode{Val: c}
+			rtl = h
+			nl = rtl
+		} else {
+			nl = &ListNode{Val: c}
+			rtl.Next = nl
+			rtl = nl
+		}
+	}
+	return h
+}
+
+func listToNum(l *ListNode) int {
+	var num int
+	i := 1
+	tp := l
+	for ; tp != nil; tp = tp.Next {
+		num += tp.Val * i
+		i *= 10
+	}
+	return num
+}
