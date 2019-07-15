@@ -20,7 +20,7 @@ func (i Integer) String() string {
 }
 
 func TestBST(t *testing.T) {
-	bst := BST{}
+	bst := &BST{}
 	nums := []Integer{Integer(5), Integer(3), Integer(6), Integer(8), Integer(4), Integer(2)}
 	for i := 0; i < len(nums); i++ {
 		bst.Add(nums[i])
@@ -29,6 +29,6 @@ func TestBST(t *testing.T) {
 	bst.PreOrder(func(e Comparable) {
 		fmt.Println(e)
 	})
-
+	fmt.Println("-------------------")
 	fmt.Println(bst)
 }

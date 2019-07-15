@@ -91,8 +91,8 @@ func preOrder(n *node, f TraverseFunc) {
 }
 
 func (t *BST) String() string {
-	var sb *strings.Builder
-	generateBSTString(t.root, 0, sb)
+	var sb strings.Builder
+	generateBSTString(t.root, 0, &sb)
 	return sb.String()
 }
 
@@ -100,9 +100,14 @@ func generateBSTString(n *node, depth int, sb *strings.Builder) {
 	if n == nil {
 		generateDepthString(depth, sb)
 		sb.WriteString("nil\n")
+		return
 	}
 	generateDepthString(depth, sb)
-	sb.WriteString(fmt.Sprintf("%v\n", n.val))
+	if n.val != nil {
+		sb.WriteString(fmt.Sprintf("%v\n", n.val))
+	} else {
+		sb.WriteString("nil值\n")
+	}
 	generateBSTString(n.left, depth+1, sb)
 	generateBSTString(n.right, depth+1, sb)
 }
