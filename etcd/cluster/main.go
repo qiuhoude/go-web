@@ -28,6 +28,19 @@ func main() {
 
 	showMemberList(cli)
 }
+
+func put(cli *clientv3.Client) {
+	kv := clientv3.NewKV(cli)
+	if response, err := kv.Put(context.TODO(), "/cron/jobs/job1", "{xxx:xxx}", clientv3.WithPrevKV()); err != nil {
+		log.Fatal(response)
+	} else {
+		fmt.Println(response.Header.Revision)
+		if response.PrevKv != nil {
+			fmt.Println("value : ", string(response.PrevKv.Value))
+		}
+	}
+}
+
 func showMemberList(cli *clientv3.Client) {
 	resp, err := cli.MemberList(context.Background())
 	if err != nil {
