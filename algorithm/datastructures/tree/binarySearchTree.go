@@ -104,7 +104,7 @@ func generateBSTString(n *node, depth int, sb *strings.Builder) {
 	}
 	generateDepthString(depth, sb)
 	if n.val != nil {
-		sb.WriteString(fmt.Sprintf("%v\n", n.val))
+		sb.WriteString(fmt.Sprintf("val:%v,size:%d,depth%d\n", n.val, n.size, n.depth))
 	} else {
 		sb.WriteString("nil值\n")
 	}
