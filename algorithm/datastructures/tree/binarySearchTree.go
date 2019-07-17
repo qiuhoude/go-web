@@ -2,6 +2,7 @@ package tree
 
 import (
 	"fmt"
+	"github.com/qiuhoude/go-web/algorithm/datastructures/stack"
 	"strings"
 )
 
@@ -90,6 +91,77 @@ func preOrder(n *node, f TraverseFunc) {
 	preOrder(n.right, f)
 }
 
+// 中序遍历,是从小到大
+func (t *BST) InOrder(f TraverseFunc) {
+	inOrder(t.root, f)
+}
+
+func inOrder(n *node, f TraverseFunc) {
+	if n == nil {
+		return
+	}
+	inOrder(n.left, f)
+	f(n.val)
+	inOrder(n.right, f)
+}
+
+// 后续序遍历
+func (t *BST) PostOrder(f TraverseFunc) {
+	postOrder(t.root, f)
+}
+
+func postOrder(n *node, f TraverseFunc) {
+	if n == nil {
+		return
+	}
+	postOrder(n.left, f)
+	postOrder(n.right, f)
+	f(n.val)
+}
+
+//前序遍历非递归的方式 NR=non recursion
+func (t *BST) PreOrderNR(f TraverseFunc) {
+	n := t.root
+	if n == nil {
+		return
+	}
+	s := stack.New()
+	s.Push(n)
+	for !s.IsEmpty() {
+		tn, _ := s.Pop().(*node)
+		f(tn.val)
+		if tn.right != nil {
+			s.Push(tn.right)
+		}
+		if tn.left != nil {
+			s.Push(tn.left)
+		}
+	}
+}
+
+// 非递归的中序遍历
+func (t *BST) InOrderNR(f TraverseFunc) {
+	//if t.root == nil {
+	//	return
+	//}
+	//
+	//s := stack.New()
+	//s.Push(t.root)
+	//
+	//for !s.IsEmpty() {
+	//	n, _ := s.Peek().(*node)
+	//	if n.left != nil {
+	//		s.Push(n.left)
+	//		continue
+	//	}
+	//	tn, _ := s.Pop().(*node)
+	//	f(tn.val)
+	//	if tn.right != nil {
+	//		s.Push(tn.right)
+	//	}
+	//}
+}
+
 func (t *BST) String() string {
 	var sb strings.Builder
 	generateBSTString(t.root, 0, &sb)
@@ -105,8 +177,6 @@ func generateBSTString(n *node, depth int, sb *strings.Builder) {
 	generateDepthString(depth, sb)
 	if n.val != nil {
 		sb.WriteString(fmt.Sprintf("val:%v,size:%d,depth%d\n", n.val, n.size, n.depth))
-	} else {
-		sb.WriteString("nil值\n")
 	}
 	generateBSTString(n.left, depth+1, sb)
 	generateBSTString(n.right, depth+1, sb)
