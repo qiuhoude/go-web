@@ -70,4 +70,68 @@ func TestBST_InOrderNR(t *testing.T) {
 	bst.InOrderNR(func(e Comparable) {
 		fmt.Println(e)
 	})
+	fmt.Println("-------------------")
+	bst.InOrderNR2(func(e Comparable) {
+		fmt.Println(e)
+	})
+}
+
+func TestBST_LevelOrder(t *testing.T) {
+	bst := generateBST()
+	bst.PreOrderNR(func(e Comparable) {
+		fmt.Println(e)
+	})
+	fmt.Println("-------------------")
+	bst.LevelOrder(func(e Comparable) {
+		fmt.Println(e)
+	})
+}
+
+func TestBst_MaxDepth(t *testing.T) {
+	bst := generateBST()
+	t.Log("最大深度 ", bst.MaxDepth())
+}
+
+func TestBST_Minimum(t *testing.T) {
+	bst := generateBST()
+	min := bst.Minimum().(Integer)
+	minNR := bst.MinimumNR().(Integer)
+	t.Log("最小值: ", min, minNR)
+
+}
+
+func TestBST_Maximum(t *testing.T) {
+	bst := generateBST()
+	max := bst.Maximum().(Integer)
+	t.Log("最大值: ", max)
+}
+
+func TestBST_RemoveMin(t *testing.T) {
+	bst := generateBST()
+	for bst.Size() > 0 {
+		m := bst.RemoveMin().(Integer)
+		fmt.Println("移除最小值: ", m)
+		fmt.Println(bst)
+	}
+}
+
+func TestBST_RemoveMax(t *testing.T) {
+	bst := generateBST()
+	for !bst.IsEmpty() {
+		m := bst.RemoveMax().(Integer)
+		fmt.Println("移除大小值: ", m)
+		fmt.Println(bst)
+	}
+}
+
+func TestBST_Remove(t *testing.T) {
+	bst := generateBST()
+	b := bst.Remove(Integer(8))
+	if b {
+		fmt.Println("删除成功")
+		fmt.Println(bst)
+	} else {
+		fmt.Println("删除失败")
+	}
+
 }

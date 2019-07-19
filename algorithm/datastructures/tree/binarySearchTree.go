@@ -1,6 +1,7 @@
 package tree
 
 import (
+	"container/list"
 	"fmt"
 	"github.com/qiuhoude/go-web/algorithm/datastructures/stack"
 	"strings"
@@ -24,6 +25,9 @@ type BST struct {
 }
 
 func (t *BST) Size() int {
+	if t.root == nil {
+		return 0
+	}
 	return t.root.size
 }
 
@@ -139,45 +143,296 @@ func (t *BST) PreOrderNR(f TraverseFunc) {
 	}
 }
 
-// 非递归的中序遍历
+// 中序遍历非递归
 func (t *BST) InOrderNR(f TraverseFunc) {
-	//if t.root == nil {
-	//	return
-	//}
-	//
-	//s := stack.New()
-	//s.Push(t.root)
-	//
-	//for !s.IsEmpty() {
-	//	n, _ := s.Peek().(*node)
-	//	if n.left != nil {
-	//		s.Push(n.left)
-	//		continue
-	//	}
-	//	tn, _ := s.Pop().(*node)
-	//	f(tn.val)
-	//	if tn.right != nil {
-	//		s.Push(tn.right)
-	//	}
-	//}
+	n := t.root
+	if n == nil {
+		return
+	}
+	s := stack.New()
+	for n != nil || !s.IsEmpty() {
+		for n != nil { // 找到最小的
+			s.Push(n)
+			n = n.left
+		}
+		n, _ = s.Pop().(*node)
+		f(n.val)
+		n = n.right
+	}
+}
+
+//中序遍历非递归的第2种方式
+func (t *BST) InOrderNR2(f TraverseFunc) {
+	n := t.root
+	if n == nil {
+		return
+	}
+	s := stack.New()
+	for n != nil || !s.IsEmpty() {
+		if n != nil {
+			s.Push(n)
+			n = n.left
+		} else {
+			n = s.Pop().(*node)
+			f(n.val)
+			n = n.right
+		}
+	}
+}
+
+// 二分搜索树的层序遍历,也是广度遍历,借助队列的结构遍历
+func (t *BST) LevelOrder(f TraverseFunc) {
+	if t.root == nil {
+		return
+	}
+	l := list.New()
+	l.PushBack(t.root)
+	for l.Len() != 0 {
+		n, _ := l.Remove(l.Front()).(*node)
+		f(n.val)
+		if n.left != nil {
+			l.PushBack(n.left)
+		}
+		if n.right != nil {
+			l.PushBack(n.right)
+		}
+	}
+}
+
+// 该树的最大深度
+func (t *BST) MaxDepth() int {
+	if t.root == nil {
+		return 0
+	}
+	maxD := 0
+	calcDepth(t.root, 0, &maxD)
+	return maxD
+}
+func calcDepth(n *node, depth int, maxDepth *int) {
+	if n == nil {
+		return
+	}
+	if *maxDepth < depth+1 {
+		*maxDepth = depth + 1
+	}
+	calcDepth(n.left, depth+1, maxDepth)
+	calcDepth(n.right, depth+1, maxDepth)
+}
+
+// 寻找二分搜索树的最小元素
+func (t *BST) Minimum() Comparable {
+	if t.root == nil {
+		return nil
+	}
+	return minimum(t.root).val
+}
+
+func minimum(n *node) *node {
+	if n.left == nil {
+		return n
+	}
+	return minimum(n.left)
+}
+
+// 寻找二分搜索树的最小元素 非递归方式
+func (t *BST) MinimumNR() Comparable {
+	if t.root == nil {
+		return nil
+	}
+	tn := t.root
+	for {
+		if tn.left == nil {
+			break
+		}
+		tn = tn.left
+	}
+	return tn.val
+}
+
+// 寻找二分搜索树的最大元素
+func (t *BST) Maximum() Comparable {
+	if t.root == nil {
+		return nil
+	}
+	return maximum(t.root).val
+}
+
+func maximum(n *node) *node {
+	if n.right == nil {
+		return n
+	}
+	return maximum(n.right)
+}
+
+func (t *BST) MaximumNR() Comparable {
+	if t.root == nil {
+		return nil
+	}
+	tn := t.root
+	for {
+		if tn.right == nil {
+			break
+		}
+		tn = tn.right
+	}
+	return tn.val
+}
+
+// 从二分搜索树中删除最小值所在节点, 返回最小值
+func (t *BST) RemoveMin() Comparable {
+	if t.root == nil {
+		return nil
+	}
+	ret := minimum(t.root)
+	t.root = removeMin(t.root)
+	return ret.val
+}
+
+// 删除掉以node为根的二分搜索树中的最小节点
+// 返回删除节点后新的二分搜索树的根 和 是否删除成功
+func removeMin(n *node) *node {
+	if n.left == nil {
+		// 将要删除的右节点挂载父节点上,通过返回值返给服节点
+		tn := n.right
+		n.right = nil // 置空 gc回收
+		opDepth(tn, -1)
+		return tn
+	}
+	n.left = removeMin(n.left)
+	n.size--
+	return n
+}
+
+// 对节点下面的所有节点进行操作
+func opDepth(n *node, op int) {
+	if n == nil {
+		return
+	}
+	n.depth = n.depth + op
+	opDepth(n.left, op)
+	opDepth(n.right, op)
+}
+
+// 从二分搜索树中删除最大值所在节点
+func (t *BST) RemoveMax() Comparable {
+	if t.root == nil {
+		return nil
+	}
+	ret := maximum(t.root)
+	t.root = removeMax(t.root)
+	return ret.val
+}
+
+func removeMax(n *node) *node {
+	if n.right == nil {
+		tn := n.left
+		n.left = nil
+		opDepth(tn, -1)
+		return tn
+	}
+	n.right = removeMax(n.right)
+	n.size--
+	return n
+}
+
+// 移除指定元素,返回true表示移除成功
+func (t *BST) Remove(c Comparable) bool {
+	if t.root == nil {
+		return false
+	}
+	n := remove(t.root, c)
+	t.root = n
+	return n != nil
+}
+
+// 移除对应元素,返回跟节点
+func remove(n *node, c Comparable) *node {
+	if n == nil {
+		return nil
+	}
+	if c.CompareTo(n.val) < 0 {
+		n.left = remove(n.left, c)
+		if n.left != nil {
+			n.size--
+		}
+		return n
+	} else if c.CompareTo(n.val) > 0 {
+		n.right = remove(n.right, c)
+		if n.right != nil {
+			n.size--
+		}
+		return n
+	} else { //相等,进行移除
+		// 以下分几种情况
+
+		// 1. 待删除节点左子树为空的情况
+		if n.left == nil { // 将右子树的数据反给上层
+			tn := n.right
+			n.left = nil
+			opDepth(tn, -1)
+			return tn
+		}
+		// 2. 待删除节点右子树为空的情况
+		if n.right == nil {
+			tn := n.left
+			n.left = nil
+			opDepth(tn, -1)
+			return tn
+		}
+
+		// 3. 左右都有数据,
+		// 找到比待删除节点大的最小节点, 即待删除节点右子树的最小节点
+		// 用这个节点顶替待删除节点的位置
+		successor := minimum(n.right)
+		successor.right = removeMin(n.right)
+		successor.left = n.left
+		successor.size = n.size - 1
+		successor.depth = n.depth
+		n.left = nil
+		n.right = nil
+		return successor
+	}
 }
 
 func (t *BST) String() string {
 	var sb strings.Builder
 	generateBSTString(t.root, 0, &sb)
+	//generateBSTLevelString(t.root, &sb)
 	return sb.String()
+}
+
+func generateBSTLevelString(n *node, sb *strings.Builder) {
+	l := list.New()
+	l.PushBack(n)
+	curDepth := 0
+	for l.Len() != 0 {
+		n, _ := l.Remove(l.Front()).(*node)
+		if n.depth > curDepth {
+			curDepth = n.depth
+			sb.WriteRune('\n')
+		}
+
+		if n.left != nil {
+			l.PushBack(n.left)
+			generateDepthString(n.left.size, sb)
+		}
+		sb.WriteString(fmt.Sprintf("%v", n.val))
+
+		if n.right != nil {
+			l.PushBack(n.right)
+			generateDepthString(n.right.size, sb)
+		}
+	}
 }
 
 func generateBSTString(n *node, depth int, sb *strings.Builder) {
 	if n == nil {
-		generateDepthString(depth, sb)
-		sb.WriteString("nil\n")
+		//generateDepthString(depth, sb)
+		//sb.WriteString("\n")
 		return
 	}
 	generateDepthString(depth, sb)
-	if n.val != nil {
-		sb.WriteString(fmt.Sprintf("val:%v,size:%d,depth%d\n", n.val, n.size, n.depth))
-	}
+	sb.WriteString(fmt.Sprintf("val:%v,child:%d,dh:%d\n", n.val, n.size-1, n.depth))
 	generateBSTString(n.left, depth+1, sb)
 	generateBSTString(n.right, depth+1, sb)
 }
