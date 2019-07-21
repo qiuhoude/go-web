@@ -123,7 +123,7 @@ func postOrder(n *node, f TraverseFunc) {
 	f(n.val)
 }
 
-//前序遍历非递归的方式 NR=non recursion
+//前序遍历 非递归的方式 NR=non recursion
 func (t *BST) PreOrderNR(f TraverseFunc) {
 	n := t.root
 	if n == nil {
@@ -140,6 +140,24 @@ func (t *BST) PreOrderNR(f TraverseFunc) {
 		if tn.left != nil {
 			s.Push(tn.left)
 		}
+	}
+}
+
+//前序遍历 非递归的方式2
+func (t *BST) PreOrderNR2(f TraverseFunc) {
+	n := t.root
+	if n == nil {
+		return
+	}
+	s := stack.New()
+	for n != nil || !s.IsEmpty() {
+		for n != nil {
+			f(n.val)
+			s.Push(n)
+			n = n.left
+		}
+		n = s.Pop().(*node)
+		n = n.left
 	}
 }
 
