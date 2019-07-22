@@ -37,14 +37,15 @@ func generateBST() *BST {
 
 func TestBST_traverse(t *testing.T) {
 	bst := generateBST()
+	fmt.Println("PreOrder-------------------")
 	bst.PreOrder(func(e Comparable) {
 		fmt.Println(e)
 	})
-	fmt.Println("-------------------")
+	fmt.Println("InOrder-------------------")
 	bst.InOrder(func(e Comparable) {
 		fmt.Println(e)
 	})
-	fmt.Println("-------------------")
+	fmt.Println("PostOrder-------------------")
 	bst.PostOrder(func(e Comparable) {
 		fmt.Println(e)
 	})
@@ -57,6 +58,10 @@ func TestBST_PreOrderNR(t *testing.T) {
 	})
 	fmt.Println("-------------------")
 	bst.PreOrderNR(func(e Comparable) {
+		fmt.Println(e)
+	})
+	fmt.Println("-------------------")
+	bst.PreOrderMorris(func(e Comparable) {
 		fmt.Println(e)
 	})
 }
@@ -72,6 +77,21 @@ func TestBST_InOrderNR(t *testing.T) {
 	})
 	fmt.Println("-------------------")
 	bst.InOrderNR2(func(e Comparable) {
+		fmt.Println(e)
+	})
+	fmt.Println("-------------------")
+	bst.InOrderMorris(func(e Comparable) {
+		fmt.Println(e)
+	})
+}
+
+func TestBST_PostOrderNR(t *testing.T) {
+	bst := generateBST()
+	bst.PostOrder(func(e Comparable) {
+		fmt.Println(e)
+	})
+	fmt.Println("-------------------")
+	bst.PostOrderNR(func(e Comparable) {
 		fmt.Println(e)
 	})
 }

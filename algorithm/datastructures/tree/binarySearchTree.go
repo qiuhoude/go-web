@@ -198,6 +198,84 @@ func (t *BST) InOrderNR2(f TraverseFunc) {
 	}
 }
 
+// 后续遍历 非递归方式
+func (t *BST) PostOrderNR(f TraverseFunc) {
+	cur := t.root
+	if cur == nil {
+		return
+	}
+	s := stack.New()
+	var pre *node //Using a pre pointer to record the last visted node
+	for cur != nil || !s.IsEmpty() {
+		for cur != nil {
+			s.Push(cur)
+			cur = cur.left
+		}
+		cur, _ = s.Pop().(*node)
+		if cur.right == nil || pre == cur.right {
+			f(cur.val)
+			pre = cur
+			cur = nil
+		} else {
+			s.Push(cur)
+			cur = cur.right
+		}
+	}
+}
+
+// Morris 方式进行遍历搜索树,不借用占 只用普通的变量
+func (t *BST) PreOrderMorris(f TraverseFunc) {
+	cur := t.root
+	if cur == nil {
+		return
+	}
+	for cur != nil {
+		if cur.left == nil {
+			f(cur.val)
+			cur = cur.right
+		} else {
+			prev := cur.left
+			for prev.right != nil && prev.right != cur {
+				prev = prev.right
+			}
+			if prev.right == nil {
+				f(cur.val)
+				prev.right = cur
+				cur = cur.left
+			} else {
+				prev.right = nil
+				cur = cur.right
+			}
+		}
+	}
+}
+
+func (t *BST) InOrderMorris(f TraverseFunc) {
+	cur := t.root
+	if cur == nil {
+		return
+	}
+	for cur != nil {
+		if cur.left == nil {
+			f(cur.val)
+			cur = cur.right
+		} else {
+			prev := cur.left
+			for prev.right != nil && prev.right != cur {
+				prev = prev.right
+			}
+			if prev.right == nil {
+				prev.right = cur
+				cur = cur.left
+			} else {
+				prev.right = nil
+				f(cur.val)
+				cur = cur.right
+			}
+		}
+	}
+}
+
 // 二分搜索树的层序遍历,也是广度遍历,借助队列的结构遍历
 func (t *BST) LevelOrder(f TraverseFunc) {
 	if t.root == nil {
