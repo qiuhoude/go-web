@@ -133,7 +133,7 @@ func (h *Heap) swap(i, j int) {
 // 返回完全二叉堆的数组表示中，一个索引所表示的元素的父亲节点的索引
 func parent(index int) int {
 	if index <= 0 {
-		return -1 //表示没有服节点索引
+		return -1 //表示没有父节点索引
 	}
 	return (index - 1) / 2
 }
