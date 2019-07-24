@@ -21,7 +21,8 @@ func NewSegmentTree(data []interface{}, mf MergeFunc) *SegmentTree {
 		data:  data,
 		merge: mf,
 	}
-	// 线段数是非满二叉树, 通过等比数列求和公式可得 2^n - 1 ,4n就可以容纳所有线段树
+	// 线段数是非满二叉树, 通过等比数列求和公式可得 2^n - 1 ,n(n>=0)是层数,表示第n层前有2^n - 1个元素
+	// 4n就可以容纳所有线段树
 	size := 4 * len(data)
 	ret.tree = make([]interface{}, size, size) //直接申请这么多的空间
 	ret.buildSegmentTree(0, 0, len(data)-1)
@@ -79,6 +80,32 @@ func (st *SegmentTree) query(treeIndex, l, r, queryL, queryR int) interface{} {
 	}
 }
 
+// 设置某个位置的值,返回false表示设置失败
+func (st *SegmentTree) Set(index int, e interface{}) bool {
+	if index < 0 || index >= st.Size() {
+		return false
+	}
+	st.data[index] = e
+	st.set(0, 0, st.Size()-1, index, e)
+	return true
+}
+
+func (st *SegmentTree) set(treeIndex, l, r, index int, e interface{}) {
+	if l == r { // 说明已经找到
+		st.tree[treeIndex] = e
+		return
+	}
+	lTreeIndex := leftChild(treeIndex)
+	rTreeIndex := rightChild(treeIndex)
+	mid := l + (r-l)/2
+	if index >= mid+1 { // 落在右边
+		st.set(rTreeIndex, mid+1, r, index, e)
+	} else { // index<mid
+		st.set(lTreeIndex, l, mid, index, e)
+	}
+	st.tree[treeIndex] = st.merge(st.tree[lTreeIndex], st.tree[rTreeIndex])
+}
+
 // 左孩子下标(和二叉堆一样)
 func leftChild(index int) int {
 	return index*2 + 1
@@ -94,7 +121,13 @@ func rightChild(index int) int {
 func (st *SegmentTree) String() string {
 	sb := strings.Builder{}
 	sb.WriteString("[")
+	//curDepth := 0
 	for i := 0; i < len(st.tree); i++ {
+		//d := depth(i)
+		//if d > curDepth {
+		//	curDepth = d
+		//	sb.WriteRune('\n')
+		//}
 		if st.tree[i] == nil {
 			sb.WriteString("nil")
 		} else {
@@ -109,11 +142,15 @@ func (st *SegmentTree) String() string {
 }
 
 func depth(index int) int {
-	i := 1
+	if index <= 0 {
+		return 0
+	}
+	i := 1 //1<<1 -1 // 公式 : i = 2^n -1
 	cnt := 0
-	for index >= i {
+	for index >= i-1 {
 		i = i << 1
 		cnt++
 	}
-	return cnt
+	// cnt 表示第n层前, index的层数是 cnt-1
+	return cnt - 1
 }
