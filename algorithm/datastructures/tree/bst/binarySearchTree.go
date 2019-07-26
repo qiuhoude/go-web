@@ -297,12 +297,14 @@ func (t *BST) LevelOrder(f TraverseFunc) {
 
 // 该树的最大深度
 func (t *BST) MaxDepth() int {
-	if t.root == nil {
-		return 0
-	}
-	maxD := 0
-	calcDepth(t.root, 0, &maxD)
-	return maxD
+	return minDepth(t.root)
+	//if t.root == nil {
+	//	return 0
+	//}
+	//maxD := 0
+	//calcDepth(t.root, 0, &maxD)
+	//return maxD
+
 }
 func calcDepth(n *node, depth int, maxDepth *int) {
 	if n == nil {
@@ -313,6 +315,40 @@ func calcDepth(n *node, depth int, maxDepth *int) {
 	}
 	calcDepth(n.left, depth+1, maxDepth)
 	calcDepth(n.right, depth+1, maxDepth)
+}
+
+func maxDepth(n *node) int {
+	if n == nil {
+		return 0
+	}
+	leftMaxDepth := maxDepth(n.left)
+	rightMaxDepth := maxDepth(n.right)
+	return max(leftMaxDepth, rightMaxDepth) + 1
+}
+
+func minDepth(n *node) int {
+	if n == nil {
+		return 0
+	}
+	leftMaxDepth := maxDepth(n.left)
+	rightMaxDepth := maxDepth(n.right)
+	return min(leftMaxDepth, rightMaxDepth) + 1
+}
+
+func min(a, b int) int {
+	if a > b {
+		return b
+	} else {
+		return a
+	}
+}
+
+func max(a, b int) int {
+	if a > b {
+		return a
+	} else {
+		return b
+	}
 }
 
 // 寻找二分搜索树的最小元素

@@ -111,6 +111,10 @@ func TestBst_MaxDepth(t *testing.T) {
 	bst := generateBST()
 	t.Log("最大深度 ", bst.MaxDepth())
 }
+func TestBst_MinDepth(t *testing.T) {
+	bst := generateBST()
+	t.Log("最小深度 ", minDepth(bst.root))
+}
 
 func TestBST_Minimum(t *testing.T) {
 	bst := generateBST()
