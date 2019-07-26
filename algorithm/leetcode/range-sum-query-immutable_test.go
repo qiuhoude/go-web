@@ -6,7 +6,7 @@ type NumArray struct {
 	sum []int
 }
 
-func Constructor(nums []int) NumArray {
+func Constructor1(nums []int) NumArray {
 	n := NumArray{}
 	n.sum = make([]int, len(nums)+1)
 	n.sum[0] = 0

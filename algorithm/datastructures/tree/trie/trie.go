@@ -8,7 +8,7 @@ type Trie struct {
 
 type node struct {
 	children map[string]*node // 孩子节点
-	isEnd    bool             // 是否结束
+	isEnd    bool             // 结束标识符
 	data     interface{}      // 存储的数据
 }
 
@@ -50,7 +50,8 @@ func (t *Trie) Add(w string, data interface{}) {
 func (t *Trie) Remove(w string) bool {
 	cur := t.root
 	var stack []*node
-	for _, v := range []rune(w) {
+	runeArr := []rune(w)
+	for _, v := range runeArr {
 		c := string(v)
 		n, ok := cur.children[c]
 		if !ok { // 没有找到该单词不用删除
@@ -59,11 +60,18 @@ func (t *Trie) Remove(w string) bool {
 		stack = append(stack, n)
 		cur = n
 	}
-	//for len(stack) > 0 {
-	//	n := stack[len(stack)-1]
-	//	stack = stack[:len(stack)-1]
-	//
-	//}
+	// 结尾标识改掉
+	cur.isEnd = false
+	if len(cur.children) == 1 { // 只有自己一个字符 没有后续的 就可以进行移除操作
+		for i := len(stack) - 1; i >= 0; i-- {
+			c := string(runeArr[i])
+			n := stack[i]
+			delete(n.children, c)
+			if cur.isEnd {
+				break
+			}
+		}
+	}
 	return true
 }
 

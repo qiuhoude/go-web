@@ -22,7 +22,7 @@ func getNames() []string {
 	return ret
 }
 
-func TestTrie_Add(t *testing.T) {
+func TestTrie(t *testing.T) {
 	tr := NewTrie()
 	names := getNames()
 	for _, name := range names {
@@ -32,4 +32,16 @@ func TestTrie_Add(t *testing.T) {
 	}
 	fmt.Println("数量:", tr.Size())
 	fmt.Println(tr.SearchPrefix("约翰"))
+	tr.Remove("约翰顿")
+	fmt.Println(tr.SearchPrefix("约翰"))
+}
+
+func TestTrie_Remove(t *testing.T) {
+	tr := NewTrie()
+	tr.Add("小", "小")
+	tr.Add("小米啦", "小米啦")
+	tr.Add("小洪啦", "小洪啦")
+	fmt.Println(tr.SearchPrefix("小"))
+	tr.Remove("小")
+	fmt.Println(tr.SearchPrefix("小"))
 }
