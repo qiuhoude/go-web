@@ -18,7 +18,11 @@ const (
 	lengthSize = 4
 )
 
+var Version = "No Version Provided ..."
+
 func main() {
+	fmt.Println("Client Version is:", Version)
+	//go run -ldflags "-X main.Version=1.6.6" main.go 编译版本
 	strIP := "127.0.0.1:9201"
 	var conn net.Conn
 	var err error
