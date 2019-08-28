@@ -36,6 +36,8 @@ require (
 	github.com/prometheus/client_golang v0.9.3 // indirect
 	github.com/prometheus/common v0.4.0
 	github.com/russross/blackfriday v1.5.2
+	github.com/smallnest/epoller v0.0.0-20190530062813-ac15129c1ee5
+	github.com/smallnest/redcon v0.9.0
 	github.com/smartystreets/go-disruptor v0.0.0-20180723194425-e0f8f9247cc2
 	github.com/soheilhy/cmux v0.1.4 // indirect
 	github.com/sourcegraph/annotate v0.0.0-20160123013949-f4cad6c6324d // indirect
