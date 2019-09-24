@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"reflect"
 	"sync"
 )
@@ -97,4 +98,44 @@ func mergeTwo(a, b <-chan interface{}) <-chan interface{} {
 		}
 	}()
 	return c
+}
+
+func asStream(done <-chan struct{}) <-chan interface{} {
+	s := make(chan interface{})
+	values := []int{1, 2, 3, 4, 5}
+	go func() {
+		defer close(s)
+
+		for _, v := range values {
+			select {
+			case <-done:
+				return
+			case s <- v:
+			}
+		}
+
+	}()
+	return s
+}
+
+func main() {
+	fmt.Println("fanIn by goroutine:")
+	done := make(chan struct{})
+	ch := fanIn(asStream(done), asStream(done), asStream(done))
+	for v := range ch {
+		fmt.Println(v)
+	}
+
+	fmt.Println("fanIn by reflect:")
+	ch = fanInReflect(asStream(done), asStream(done), asStream(done))
+	for v := range ch {
+		fmt.Println(v)
+	}
+
+	fmt.Println("fanIn by recursion:")
+	ch = fanInRec(asStream(done), asStream(done), asStream(done))
+	for v := range ch {
+		fmt.Println(v)
+	}
+
 }
