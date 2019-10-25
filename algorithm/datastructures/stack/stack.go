@@ -1,6 +1,20 @@
 // 栈结构
 package stack
 
+import (
+	"fmt"
+	"strings"
+)
+
+type IStack interface {
+	Len() int
+	IsEmpty() bool
+	Peek() interface{}
+	Pop() interface{}
+	Push(value interface{})
+	Flush()
+}
+
 type (
 	Stack struct {
 		top    *node // 栈顶
@@ -46,4 +60,19 @@ func (s *Stack) Push(value interface{}) {
 	n := s.top
 	s.top = &node{value, n}
 	s.length++
+}
+
+func (s *Stack) Flush() {
+	s.length = 0
+	s.top = nil
+}
+
+func (s *Stack) String() string {
+	var sb strings.Builder
+	sb.WriteString("top ")
+	cur := s.top
+	for ; cur != nil; cur = cur.pre {
+		_, _ = fmt.Fprintf(&sb, "%v ", cur.value)
+	}
+	return sb.String()
 }
