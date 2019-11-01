@@ -2,6 +2,7 @@ package sort_
 
 import (
 	"fmt"
+	"sort"
 	"testing"
 )
 
@@ -43,7 +44,7 @@ func bubbleSort(arr []int) {
 
 func TestBubbleSort(t *testing.T) {
 	arr := []int{4, 5, 6, 3, 2, 1}
-	//bubbleSort(arr)
+	bubbleSort(arr)
 	fmt.Println(arr)
 }
 
@@ -69,7 +70,7 @@ func insertionSort(arr []int) {
 	}
 	for i := 1; i < n; i++ {
 		v := arr[i] // 记录要插入的值
-		j := i - 1  // 0~j 表示已排好序的位置
+		j := i - 1  // 0~j 已排序区间
 		// 查找要插入的位置
 		for ; j >= 0; j-- {
 			if arr[j] > v {
@@ -145,6 +146,7 @@ T(n) = 2*T(n/2) + n
 	= 8*(2*T(n/16) + n/8) + 3*n = 16*T(n/16) + 4*n
 	......
 	= 2^k * T(n/2^k) + k * n
+	= 2^(log2(n)) * C+ log(n)*n
 	= 2*n * C 		 + log(n)*n
 	= nlog(n) + 2n*C
 
@@ -155,8 +157,8 @@ n/2^k = 1  => k = log2(n)
 
 空间复杂度
 2^x=n => x=log2(n)
-看上去要去要分配log2(n)次,每次需要分配n个空间, O(n * log2(n));
-但是同一时刻只会有n个空间被分配
+看上去要去要分配log2(n)次,每次需要分配n/2^k个空间, O(n * log2(n));
+但是同一时刻只最多只有n个空间被分配
 所以复杂度是 O(n)
 */
 func mergeSortEnter(arr []int) {
@@ -228,6 +230,7 @@ func TestMergeSort(t *testing.T) {
 平均 O(nlogn)
 
 利用的分治 和 分区的思想
+
 */
 
 func quickSortEnter(arr []int) {
@@ -247,6 +250,20 @@ func quickSort(arr []int, p, r int) {
 	quickSort(arr, q+1, r)
 }
 
+/*
+进行分区
+思路: 也可以根据插入排序或选择排序的分区思路,把原区域分为
+[0:i] 比pivot小的值, [i+1:end] 比pivot大的值两个区域
+步骤: 1. 找arr[end] 为 pivot值
+	 2. 开始遍历每个元素,只要 <pivot 就放到左边区域的尾部进行替换,左边区域尾部的下标+1
+	 3. 最后 end 与 左边区域尾部下标值进行交换,
+	 4. 左边区域尾部下标值就是要找的位置
+
+
+选取pivot的优化思路:
+1. 三数取中法  从区间的首、尾、中间，分别取出一个数，然后对比大小，取这 3 个数的中间值作为分区点
+2. 随机法
+*/
 func partition(arr []int, p, r int) int {
 	// 取 r位置为 pivot点
 	pivot := arr[r]
@@ -260,6 +277,7 @@ func partition(arr []int, p, r int) int {
 		}
 	}
 	arr[i], arr[r] = arr[r], arr[i]
+	sort.Slice()
 	return i
 }
 
@@ -299,3 +317,22 @@ func TestFindMaxK(t *testing.T) {
 		t.Log(arr[i])
 	}
 }
+
+/*
+分库分页
+
+业务折衷法-禁止跳页查询
+（1）用正常的方法取得第一页数据，并得到第一页记录的time_max
+（2）每次翻页，将order by time offset X limit Y，改写成order by time where time>$time_max limit Y
+以保证每次只返回一页数据，性能为常量。
+
+业务折衷法-允许模糊数据
+（1）将order by time offset X limit Y，改写成order by time offset X/N limit Y/N
+
+二次查询法
+（1）将order by time offset X limit Y，改写成order by time offset X/N limit Y (N是分库的数量)
+（2）找到最小值time_min
+（3）between二次查询，order by time between $time_min and $time_i_max
+（4）设置虚拟time_min，找到time_min在各个分库的offset，从而得到time_min在全局的offset
+（5）得到了time_min在全局的offset，自然得到了全局的offset X limit Y
+*/

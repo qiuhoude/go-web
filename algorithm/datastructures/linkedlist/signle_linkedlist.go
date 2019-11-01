@@ -150,6 +150,7 @@ func (this *LinkedList) DeleteNode(p *ListNode) bool {
 }
 
 // 判断单链表是否有环
+// 思路: 快 慢 指针,不断往后移动,只要快慢指针指向同位置说明有环
 func (this *LinkedList) HasCycle() bool {
 	if nil != this.head {
 		slow := this.head
@@ -166,6 +167,7 @@ func (this *LinkedList) HasCycle() bool {
 
 }
 
+// 找到中间节点 当有 len值时 直接 len>0; index=len/2
 func (this *LinkedList) FindMidNode2() *ListNode {
 	if this.length <= 0 {
 		return nil
@@ -174,7 +176,7 @@ func (this *LinkedList) FindMidNode2() *ListNode {
 	return this.FindByIndex(uint(index))
 }
 
-// 找到中间节点(有len 直接 len>0; index=len/2)
+// 找到中间节点
 func (this *LinkedList) FindMidNode() *ListNode {
 	if this.head.next == nil {
 		return nil
@@ -203,7 +205,7 @@ func (this *LinkedList) String() string {
 }
 
 /*
-两个有序单链表合并
+两个有序单链表合并, 归并排序的链表结构可以此
 */
 func MergeSortedList(l1, l2 *LinkedList) *LinkedList {
 	if l1 == nil && l2 == nil {
@@ -265,6 +267,8 @@ func MergeSortedList2(l1, l2 *LinkedList) *LinkedList {
 
 /*
 删除倒数第N个节点
+思路: 还是快 慢 双指针, 让快指针先走n部,然后快慢指针同时走, 快指针到尾部就结束
+此时慢指针下一个node就是要目标node
 */
 func (this *LinkedList) DeleteBottomN(n int) {
 	if n <= 0 || nil == this.head || nil == this.head.next {
