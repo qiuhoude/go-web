@@ -5,6 +5,7 @@ import "testing"
 func TestSkipList(t *testing.T) {
 	sl := NewSkipList()
 
+	sl.Insert("qiu", 75)
 	sl.Insert("leo", 95)
 	sl.Insert("jack", 88)
 	sl.Insert("lily", 100)
@@ -22,4 +23,6 @@ func TestSkipList(t *testing.T) {
 
 	t.Log(sl)
 	t.Log("-----------------------------")
+
+	t.Log(sl.FindRange(85, 100))
 }

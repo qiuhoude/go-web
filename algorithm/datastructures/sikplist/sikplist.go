@@ -49,6 +49,10 @@ func newSkipListNode(v interface{}, score, level int) *skipListNode {
 	}
 }
 
+func (sln *skipListNode) String() string {
+	return fmt.Sprintf("[%v %v]", sln.v, sln.score)
+}
+
 // 跳表结构体
 type SkipList struct {
 	head   *skipListNode //跳表头结点
@@ -146,6 +150,29 @@ func (sl *SkipList) Find(v interface{}, score int) *skipListNode {
 				return cur.forwards[i]
 			}
 		}
+	}
+	return nil
+}
+
+// 范围查找
+func (sl *SkipList) FindRange(start, end int) []interface{} {
+	if sl.length == 0 || end < start {
+		return nil
+	}
+	cur := sl.head.forwards[sl.level-1]
+	for i := sl.level - 1; i >= 0; i-- {
+		for ; nil != cur; cur = cur.forwards[i] {
+			if cur.score >= start {
+				break
+			}
+		}
+	}
+	if cur != nil {
+		var ret []interface{}
+		for ; cur != nil && cur.score <= end; cur = cur.forwards[0] {
+			ret = append(ret, cur.v)
+		}
+		return ret
 	}
 	return nil
 }
