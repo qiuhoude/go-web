@@ -297,7 +297,8 @@ func (t *BST) LevelOrder(f TraverseFunc) {
 
 // 该树的最大深度
 func (t *BST) MaxDepth() int {
-	return minDepth(t.root)
+	return maxDepth(t.root)
+
 	//if t.root == nil {
 	//	return 0
 	//}
@@ -321,18 +322,32 @@ func maxDepth(n *node) int {
 	if n == nil {
 		return 0
 	}
-	leftMaxDepth := maxDepth(n.left)
-	rightMaxDepth := maxDepth(n.right)
-	return max(leftMaxDepth, rightMaxDepth) + 1
+	if n.left == nil { // 若左子树为空，则右子树的深度为为该节点的深度
+		return maxDepth(n.right) + 1
+	}
+	if n.right == nil {
+		return maxDepth(n.left) + 1
+	}
+	// 可用理解为是后序遍历
+	// 在跟父点处比较大小
+	leftDepth := maxDepth(n.left)
+	rightDepth := maxDepth(n.right)
+	return max(leftDepth, rightDepth) + 1
 }
 
 func minDepth(n *node) int {
 	if n == nil {
 		return 0
 	}
-	leftMaxDepth := maxDepth(n.left)
-	rightMaxDepth := maxDepth(n.right)
-	return min(leftMaxDepth, rightMaxDepth) + 1
+	if n.left == nil { // 若左子树为空，则右子树的深度为为该节点的深度
+		return minDepth(n.right) + 1
+	}
+	if n.right == nil {
+		return minDepth(n.left) + 1
+	}
+	leftDepth := minDepth(n.left)
+	rightDepth := minDepth(n.right)
+	return min(leftDepth, rightDepth) + 1
 }
 
 func min(a, b int) int {
@@ -469,12 +484,12 @@ func removeMax(n *node) *node {
 
 // 移除指定元素,返回true表示移除成功
 func (t *BST) Remove(c Comparable) bool {
-	if t.root == nil {
+	if !t.Contains(c) { // 不存在删除失败
 		return false
 	}
 	n := remove(t.root, c)
 	t.root = n
-	return n != nil
+	return true
 }
 
 // 移除对应元素,返回跟节点
@@ -528,31 +543,39 @@ func remove(n *node, c Comparable) *node {
 
 func (t *BST) String() string {
 	var sb strings.Builder
-	generateBSTString(t.root, 0, &sb)
-	//generateBSTLevelString(t.root, &sb)
+	//generateBSTString(t.root, 0, &sb)
+	generateBSTLevelString(t.root, &sb)
 	return sb.String()
 }
 
 func generateBSTLevelString(n *node, sb *strings.Builder) {
 	l := list.New()
 	l.PushBack(n)
-	curDepth := 0
+	//curDepth := 0
+
+	curNodeCnt := 1
+	nextNodeCnt := 0
 	for l.Len() != 0 {
 		n, _ := l.Remove(l.Front()).(*node)
-		if n.depth > curDepth {
-			curDepth = n.depth
-			sb.WriteRune('\n')
-		}
+		//if n.depth > curDepth {
+		//	curDepth = n.depth
+		//	sb.WriteRune('\n')
+		//}
 
+		sb.WriteString(fmt.Sprintf("%v ", n.val))
+		curNodeCnt--
 		if n.left != nil {
 			l.PushBack(n.left)
-			generateDepthString(n.left.size, sb)
+			nextNodeCnt++
 		}
-		sb.WriteString(fmt.Sprintf("%v", n.val))
-
 		if n.right != nil {
 			l.PushBack(n.right)
-			generateDepthString(n.right.size, sb)
+			nextNodeCnt++
+		}
+		if curNodeCnt == 0 {
+			sb.WriteRune('\n')
+			curNodeCnt = nextNodeCnt
+			nextNodeCnt = 0
 		}
 	}
 }

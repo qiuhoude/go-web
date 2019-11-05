@@ -20,13 +20,15 @@ func (i Integer) String() string {
 }
 
 func generateBST() *BST {
-	/////////////////
-	//      5      //
-	//    /   \    //
-	//   3    6    //
-	//  / \    \   //
-	// 2  4     8  //
-	/////////////////
+	/*
+		//      5
+		//    /  \
+		//   3    6
+		//  / \    \
+		// 2  4   	8
+		//		   /
+		//		  7
+	*/
 	bst := &BST{}
 	nums := []Integer{Integer(5), Integer(3), Integer(6), Integer(8), Integer(4), Integer(2), Integer(7)}
 	for i := 0; i < len(nums); i++ {
@@ -109,7 +111,7 @@ func TestBST_LevelOrder(t *testing.T) {
 
 func TestBst_MaxDepth(t *testing.T) {
 	bst := generateBST()
-	t.Log("最大深度 ", bst.MaxDepth())
+	t.Log("最大深度 ", maxDepth(bst.root))
 }
 func TestBst_MinDepth(t *testing.T) {
 	bst := generateBST()
