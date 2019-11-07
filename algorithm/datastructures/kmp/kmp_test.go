@@ -13,7 +13,7 @@ func TestMarchSubstr(t *testing.T) {
 		{"BBC ABCDAB ABCDABCDABDEsddABCDABCDABDABCDABD", "ABCDABD", 3},
 		{"BBC ABCDAB ABCDABCDABDE", "ABCDABD", 1},
 		{"BBC ABCDAB ABCDABCDABDESS", "ABCDABD", 1},
-		{"AAAAAAAAAAAAAAAAAAAAAAAA", "BB", 0},
+		{"AAAAAAAAAAAAAAAAAAAAAAAA", "BB你好", 0},
 	}
 	for i, tt := range tests {
 		out := MarchSubstr([]rune(tt.mainStr), []rune(tt.subStr))

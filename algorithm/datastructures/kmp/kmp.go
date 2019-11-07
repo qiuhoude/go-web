@@ -1,21 +1,27 @@
 package kmp
 
+/*
+kmp算法步骤
+1.
+2.
+
+*/
 // 匹配主中有多少个子串
-func MarchSubstr(mainStr, subStr []rune) int {
-	if len(mainStr) < len(subStr) { // 子串大于主肯定没有匹配的
+func MarchSubstr(mainStr, pattern []rune) int {
+	if len(mainStr) < len(pattern) { // 子串大于主肯定没有匹配的
 		return 0
 	}
-	preTab := prefixTable(subStr) //前缀表
+	preTab := prefixTable(pattern) //前缀表
 	var (
 		mp       = 0 // 主串的下标
 		mLen     = len(mainStr)
-		sLen     = len(subStr)
+		sLen     = len(pattern)
 		marchCnt = 0 // 已匹配数量
 	)
 	for mp+sLen <= mLen {
 		mCnt := 0 //已匹配的字符数
 		for sp := 0; sp < sLen; sp++ {
-			if subStr[sp] != mainStr[mp+sp] {
+			if pattern[sp] != mainStr[mp+sp] {
 				break
 			}
 			mCnt++

@@ -7,9 +7,9 @@ type Trie struct {
 }
 
 type node struct {
-	children map[string]*node // 孩子节点
-	isEnd    bool             // 结束标识符
-	data     interface{}      // 存储的数据
+	children map[rune]*node // 孩子节点
+	isEnd    bool           // 结束标识符
+	data     interface{}    // 存储的数据
 }
 
 func NewTrie() *Trie {
@@ -19,7 +19,7 @@ func NewTrie() *Trie {
 
 func newNode() *node {
 	n := new(node)
-	n.children = make(map[string]*node)
+	n.children = make(map[rune]*node)
 	return n
 }
 
@@ -31,11 +31,11 @@ func (t Trie) Size() int {
 func (t *Trie) Add(w string, data interface{}) {
 	cur := t.root
 	for _, v := range []rune(w) {
-		c := string(v)
-		n, ok := cur.children[c]
+
+		n, ok := cur.children[v]
 		if !ok {
 			n = newNode()
-			cur.children[c] = n
+			cur.children[v] = n
 		}
 		cur = n
 	}
@@ -52,19 +52,20 @@ func (t *Trie) Remove(w string) bool {
 	var stack []*node
 	runeArr := []rune(w)
 	for _, v := range runeArr {
-		c := string(v)
-		n, ok := cur.children[c]
+
+		n, ok := cur.children[v]
 		if !ok { // 没有找到该单词不用删除
 			return false
 		}
 		stack = append(stack, n)
 		cur = n
 	}
+	t.size--
 	// 结尾标识改掉
 	cur.isEnd = false
 	if len(cur.children) == 1 { // 只有自己一个字符 没有后续的 就可以进行移除操作
 		for i := len(stack) - 1; i >= 0; i-- {
-			c := string(runeArr[i])
+			c := runeArr[i]
 			n := stack[i]
 			delete(n.children, c)
 			if cur.isEnd {
@@ -78,8 +79,8 @@ func (t *Trie) Remove(w string) bool {
 func (t *Trie) Find(w string) interface{} {
 	cur := t.root
 	for _, v := range []rune(w) {
-		c := string(v)
-		n, ok := cur.children[c]
+
+		n, ok := cur.children[v]
 		if !ok {
 			return nil
 		}
@@ -99,8 +100,7 @@ func (t *Trie) Contains(w string) bool {
 func (t *Trie) SearchPrefix(prefix string) []interface{} {
 	cur := t.root
 	for _, v := range []rune(prefix) {
-		c := string(v)
-		n, ok := cur.children[c]
+		n, ok := cur.children[v]
 		if !ok {
 			return nil
 		}

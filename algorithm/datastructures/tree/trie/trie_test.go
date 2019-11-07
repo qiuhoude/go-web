@@ -34,6 +34,7 @@ func TestTrie(t *testing.T) {
 	fmt.Println(tr.SearchPrefix("约翰"))
 	tr.Remove("约翰顿")
 	fmt.Println(tr.SearchPrefix("约翰"))
+	fmt.Println("数量:", tr.Size())
 }
 
 func TestTrie_Remove(t *testing.T) {
