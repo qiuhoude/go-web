@@ -2,7 +2,6 @@ package sort_
 
 import (
 	"fmt"
-	"sort"
 	"testing"
 )
 
@@ -226,7 +225,7 @@ func TestMergeSort(t *testing.T) {
 递归出口 p>=r
 
 空间复杂度 O(1)
-最坏 O(n^2) 选取的 pivot的位置点在最边上
+最坏 O(n^2) 选取的 pivot的位置点是最大值或最小值
 平均 O(nlogn)
 
 利用的分治 和 分区的思想
@@ -277,7 +276,6 @@ func partition(arr []int, p, r int) int {
 		}
 	}
 	arr[i], arr[r] = arr[r], arr[i]
-	sort.Slice()
 	return i
 }
 

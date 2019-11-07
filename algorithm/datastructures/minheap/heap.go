@@ -1,36 +1,30 @@
 // go sdk中的container包下已经有了heap堆的结构,此处实现按照java的思路实现
 package minheap
 
-// 需要使用指针接受者去实现接口
-type Comparable interface {
-	// 比较大小 相等返回0 , 当前这个数小返回负数 ,当前数大返回正数
-	CompareTo(o Comparable) int
-}
+//比较大小 相等返回0 , 当前这个数小返回负数 ,当前数大返回正数
+type CompareFunc func(v1, v2 interface{}) int
 
 type Heap struct {
-	data []Comparable //存储的数据
+	data    []interface{} //存储的数据
+	cmpFunc CompareFunc   // 比较函数
 }
 
-func NewHeap(d []Comparable) *Heap {
-	ret := &Heap{}
-	if d == nil || len(d) == 0 {
-		return ret
-	}
-	ret.data = make([]Comparable, len(d))
-	for i := 0; i < len(d); i++ {
-		ret.data[i] = d[i]
-	}
-	//heapify 操作
-	ret.heapify()
-	return ret
+func NewHeap(f CompareFunc) *Heap {
+	return &Heap{cmpFunc: f}
 }
 
-func (h *Heap) heapify() {
+/*
+heapifyd 是时间复杂度是 O(n) 级别
+排序复杂度是 O(nlogn) , 非稳定性排序
+*/
+func (h *Heap) Heapify(d ...interface{}) {
 	// 思路: 跳过叶子节点,对最小的父节点进行下沉操作,一直到根部
 	// 最小的叶子节点的服节点就 parent(len()-1)
-	if h.data == nil || h.Len() == 0 {
+	if d == nil || len(d) == 0 {
 		return
 	}
+	h.data = make([]interface{}, len(d))
+	copy(h.data, d)
 	for i := parent(h.Len() - 1); i >= 0; i-- {
 		h.siftDown(i)
 	}
@@ -43,7 +37,7 @@ func (h *Heap) Len() int {
 	return len(h.data)
 }
 
-func (h *Heap) Poll() Comparable {
+func (h *Heap) Poll() interface{} {
 	//1. 取出队头元素
 	//2. 将对尾元素,移到顶部
 	//3. 移除尾部
@@ -59,9 +53,9 @@ func (h *Heap) Poll() Comparable {
 }
 
 // 移除对应的元素
-func (h *Heap) Remove(e Comparable, eqFunc func(e, b Comparable) bool) bool {
+func (h *Heap) Remove(e interface{}, eqFunc func(e, b interface{}) bool) bool {
 	// 1 找到对应元素
-	var find Comparable
+	var find interface{}
 	var fi int
 	for i := 0; i < h.Len(); i++ {
 		if eqFunc(e, h.data[i]) {
@@ -83,14 +77,14 @@ func (h *Heap) Remove(e Comparable, eqFunc func(e, b Comparable) bool) bool {
 	}
 }
 
-func (h *Heap) Peek() Comparable {
+func (h *Heap) Peek() interface{} {
 	if h.Len() == 0 {
 		return nil
 	}
 	return h.data[0]
 }
 
-func (h *Heap) Add(e Comparable) {
+func (h *Heap) Add(e interface{}) {
 	h.data = append(h.data, e)
 	h.siftUp(h.Len() - 1)
 }
@@ -99,7 +93,7 @@ func (h *Heap) Add(e Comparable) {
 func (h *Heap) siftUp(i int) {
 	ci := i
 	pi := parent(ci)
-	for ci > 0 && h.data[ci].CompareTo(h.data[pi]) < 0 {
+	for ci > 0 && h.cmpFunc(h.data[ci], h.data[pi]) < 0 {
 		h.swap(pi, ci)
 		ci = pi
 		pi = parent(ci)
@@ -111,13 +105,12 @@ func (h *Heap) siftDown(i int) {
 	ci := i
 	dataLen := h.Len() // 数据大小
 	for leftChild(ci) < dataLen {
-		// 找到较小值的孩子的下标
-		mi := leftChild(ci)
-		if mi+1 < dataLen && h.data[mi].CompareTo(h.data[mi+1]) > 0 { // mi + 1 表示右边下标
+		mi := leftChild(ci)                                            //  较小值的孩子的下标
+		if mi+1 < dataLen && h.cmpFunc(h.data[mi], h.data[mi+1]) > 0 { // mi + 1 表示右边下标
 			// 右孩子的值小些
 			mi += 1
 		}
-		if h.data[ci].CompareTo(h.data[mi]) <= 0 {
+		if h.cmpFunc(h.data[ci], h.data[mi]) <= 0 {
 			// 已经比孩子小了不用下沉
 			break
 		}

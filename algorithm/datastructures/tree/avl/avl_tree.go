@@ -103,6 +103,8 @@ func (t *AVLTree) add(n *avlNode, v interface{}) (*avlNode, bool) {
 	n.height = max(getHeight(n.left), getHeight(n.right)) + 1
 
 	// 计算平衡因子
+	// balanceFactor > 0 说明 左边高 右边低
+	// balanceFactor < 0 说明 左边低 右边高
 	balanceFactor := getBalanceFactor(n)
 
 	//if abs(balanceFactor) > 1 { // 平衡因子大1 需要处理
@@ -111,12 +113,11 @@ func (t *AVLTree) add(n *avlNode, v interface{}) (*avlNode, bool) {
 
 	// 维护平衡操作
 	if balanceFactor > 1 && getBalanceFactor(n.left) >= 0 { //LL
-		// 左边高 右边低
 		// LL 型,在父节点的左孩子的左子树添加了新节点，导致根节点的平衡因子变为 +2，二叉树失去平衡
 		// 右旋一次即可
 		n = t.rightRotate(n)
 	} else if balanceFactor < -1 && getBalanceFactor(n.right) <= 0 { //RR
-		// 左边低 右边高
+		//
 		// RR 型 同理
 		n = t.leftRotate(n)
 	} else if balanceFactor > 1 && getBalanceFactor(n.left) < 0 { //LR
@@ -233,44 +234,70 @@ func (t *AVLTree) Remove(v interface{}) bool {
 	return true
 }
 
-// 移除对应元素,返回跟节点
+// 移除对应元素,返回节点将挂载到调用者的子节点上
 func (t *AVLTree) remove(n *avlNode, v interface{}) *avlNode {
 	if n == nil {
 		return nil
 	}
 	cmp := t.compareFunc(v, n.v)
+	var retNode *avlNode // 返回父节点
 	if cmp < 0 {
 		n.left = t.remove(n.left, v)
-		return n
+		retNode = n
 	} else if cmp > 0 {
 		n.right = t.remove(n.right, v)
-		return n
+		retNode = n
 	} else { // ==
-		// 1. 待删除节点左子树为空的情况
-		if n.left == nil { // 将右子树的数据反给上层
+		if n.left == nil && n.right == nil { // 待删除节点左右都为空
+			// 返回nil 给他的父节点
+			retNode = nil
+		} else if n.left == nil { // 1. 待删除节点左子树为空的情况
+			// 将右子树的数据反给上层
 			tn := n.right
 			n.left = nil
 			t.size--
-			return tn
-		}
-		// 2. 待删除节点右子树为空的情况
-		if n.right == nil {
+			retNode = tn
+		} else if n.right == nil { // 2. 待删除节点右子树为空的情况
 			tn := n.left
 			n.left = nil
 			t.size--
-			return tn
+			retNode = tn
+		} else { // 3. 左右都有数据
+			// 找到比待删除节点大的最小节点, 即待删除节点右子树的最小节点
+			// 用这个节点顶替待删除节点的位置
+			successor := t.minimum(n.right)
+			//removeMin中已经 size--,外面不需要 --
+			successor.right = t.removeMin(n.right)
+			successor.left = n.left
+			n.left = nil
+			n.right = nil
+			retNode = successor
 		}
-		// 3. 左右都有数据,
-		// 找到比待删除节点大的最小节点, 即待删除节点右子树的最小节点
-		// 用这个节点顶替待删除节点的位置
-		successor := t.minimum(n.right)
-		//removeMin中已经 size--,外面不需要 --
-		successor.right = t.removeMin(n.right)
-		successor.left = n.left
-		n.left = nil
-		n.right = nil
-		return successor
 	}
+	if retNode == nil {
+		return nil
+	}
+
+	// 维护更新height
+	retNode.height = max(getHeight(retNode.left), getHeight(retNode.right)) + 1
+
+	// 计算平衡因子
+	balanceFactor := getBalanceFactor(retNode)
+
+	// 维护平衡操作
+	if balanceFactor > 1 && getBalanceFactor(retNode.left) >= 0 { //LL
+		retNode = t.rightRotate(retNode)
+	} else if balanceFactor < -1 && getBalanceFactor(retNode.right) <= 0 { //RR
+		retNode = t.leftRotate(retNode)
+	} else if balanceFactor > 1 && getBalanceFactor(retNode.left) < 0 { //LR
+		retNode.left = t.leftRotate(retNode.left)
+		retNode = t.rightRotate(retNode)
+	} else if balanceFactor < -1 && getBalanceFactor(retNode.right) > 0 { //RL
+		retNode.right = t.rightRotate(retNode.right)
+		retNode = t.leftRotate(retNode)
+	}
+	return retNode
+
 }
 
 //  返回以node为根的二分搜索树的最小值所在的节点

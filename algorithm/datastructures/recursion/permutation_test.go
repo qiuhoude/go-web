@@ -7,7 +7,14 @@ import (
 )
 
 // 递归实现全排列
-// 思路: 可以画出树图进行递归解析, abc -> axx, bxx, cxx;
+// 思路: 可以画出递归树图进行递归解析, abc -> axx, bxx, cxx;
+/*
+时间复杂度分析
+递推公式: f(n) = n*f(n-1)
+对递推公式求和: Σ = n + n*f(n-1) + n*(n-1)*f(n-2) + ...
+所以的 O(n!)~O(n*n!) 之间
+
+*/
 func permutation(arr []interface{}, start, dep int) {
 	len := len(arr)
 	if start == len-1 { // 最后一位

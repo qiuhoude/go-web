@@ -12,7 +12,7 @@ type ArrayStack struct {
 }
 
 func NewArrayStack() *ArrayStack {
-	return &ArrayStack{0, make([]interface{}, 0, 2)}
+	return &ArrayStack{0, make([]interface{}, 0, 8)}
 }
 
 func (s *ArrayStack) Len() int {
