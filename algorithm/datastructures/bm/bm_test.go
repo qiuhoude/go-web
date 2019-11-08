@@ -13,6 +13,6 @@ func Test_generateGS(t *testing.T) {
 
 func Test_BmSearch(t *testing.T) {
 	main := "abcacabcb洗cabcab哈哈c"
-	pattern := "cabcab哈哈"
+	pattern := "cabcab"
 	fmt.Println(BmSearch([]rune(main), []rune(pattern)))
 }

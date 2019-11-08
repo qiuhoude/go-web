@@ -2,8 +2,8 @@ package bm
 
 /*
 bm 字符匹配算法 Boyer-Moore
-1. 好串规则 bad character rule
-2. 坏串规则 good suffix shift
+1. 好串规则 bad character rule 好串表示已匹配字符
+2. 坏串规则 good suffix shift  坏串表示不匹配字符
 */
 
 // 构建 k:字符 v:位置 的hash表
@@ -17,43 +17,59 @@ func generateBc(b []rune) map[rune]int {
 
 // 返回第一个匹配的位置
 func BmSearch(mainStr, pattern []rune) int {
+	if len(mainStr) == 0 || len(pattern) == 0 || len(pattern) > len(mainStr) {
+		return -1
+	}
 	//构建坏字符哈希表
 	bc := generateBc(pattern)
 	n := len(mainStr)
 	m := len(pattern)
 	suffix, prefix := generateGS(pattern)
-	i := 0 // 主串与模式对齐的第一个字符的位置
-	for i <= n-m {
-		j := m - 1          // j表示坏处的下标
-		for ; j >= 0; j-- { // 从后往前进行匹配
-			if mainStr[i+j] != pattern[j] {
+	step := 1
+	// 主串与模式对齐的第一个字符的位置
+	for i := 0; i <= n-m; i += step {
+
+		//查找坏字符串的位置
+		badCharIndex := m - 1                     // badCharIndex 表示坏字符在模式串的位置
+		for ; badCharIndex >= 0; badCharIndex-- { // 从后往前进行匹配
+			if mainStr[i+badCharIndex] != pattern[badCharIndex] {
 				break //找到了坏字符的位置
 			}
 		}
-		if j <= 0 {
-			return i // 匹配成功，返回主串与模式串第一个匹配的字符的位置
+
+		if badCharIndex <= 0 {
+			// 没有坏串就匹配成功，返回主串与模式串第一个匹配的字符的位置
+			return i
+			/*
+				// 如果此处如果要继续匹配
+				step =1
+				continue
+			*/
 		}
 		/*
 			1. 坏串规则:
-			 i+j是坏串的位置, mainStr[i+j]就是坏串的字符
-			 bc[mainStr[i+j]]就是坏串字符在模式串的位置 没有就是 -1
-			 j-bc[mainStr[i+j]] 就是要向后滑动的距离
+			 i+badCharIndex是坏字符在主串的位置, mainStr[i+badCharIndex]就是坏串的字符
+			 bc[mainStr[i+badCharIndex]]就是坏串字符在模式串的位置 没有就是 -1
+			 badCharIndex-bc[mainStr[i+badCharIndex]] 就是要向后滑动的距离
 		*/
 		bcIndex := -1
-		if i, ok := bc[mainStr[i+j]]; ok {
+		if i, ok := bc[mainStr[i+badCharIndex]]; ok {
 			bcIndex = i
 		}
-		x := j - bcIndex // 坏串滑动位数
+		stepForBC := badCharIndex - bcIndex // 坏串滑动位数
 
 		/*
 			2. 好串规则
 		*/
-		y := 0
-		if j < m-1 { //如果有好串后缀
-			y = moveByGS(j, m, suffix, prefix) // 计算位移
+		stepForGS := -1
+		if badCharIndex < m-1 { //如果有好串后缀
+			stepForGS = moveByGS(badCharIndex, m, suffix, prefix) // 计算位移
 		}
-		// 向后移动
-		i = i + max(x, y)
+		// 向后移动位置
+		step = max(stepForBC, stepForGS)
+		if step <= 0 { // 防止负数
+			step = 1
+		}
 	}
 	return -1
 }
@@ -66,20 +82,22 @@ func max(a, b int) int {
 
 }
 
-// j 表示坏字符对应的模式串中的字符下标 ; m 表示模式串长度
-func moveByGS(j, m int, suffix []int, prefix []bool) int {
-	k := m - 1 - j       // 好串的长度
-	if suffix[k] != -1 { //complete match 直接找到位置了
-		return j - suffix[k] + 1
+// badChartIndex 表示坏字符在模式串中的位置 ; m 表示模式串长度
+func moveByGS(badCharIndex, patternLen int, suffix []int, prefix []bool) int {
+	k := patternLen - 1 - badCharIndex // k 已经匹配后缀的长度
+	if suffix[k] != -1 {               //complete match 直接找到位置了
+		return badCharIndex - suffix[k] + 1
 	}
-	// 否则找后缀子串
-	for r := j + 2; r < m-1; r++ {
-		if prefix[m-r] {
+
+	// 否则匹配后缀子串
+	for r := badCharIndex + 2; r < patternLen-1; r++ {
+		//
+		if prefix[patternLen-r] { // patternLen-r 表示后缀子串的长度
 			return r
 		}
 	}
 	//no match
-	return m
+	return patternLen
 }
 
 // 返回好串 后缀表 与 前缀表

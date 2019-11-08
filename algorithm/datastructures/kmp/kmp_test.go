@@ -23,3 +23,11 @@ func TestMarchSubstr(t *testing.T) {
 	}
 
 }
+
+func Test_prefixTable(t *testing.T) {
+	s := []rune("ababacd")
+	table1 := prefixTable(s)
+	table2 := prefixTable2(s)
+	t.Log(table1)
+	t.Log(table2)
+}
