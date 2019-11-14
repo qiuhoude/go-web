@@ -10,7 +10,7 @@ import (
 //https://leetcode-cn.com/problems/permutations/
 
 // 思路: 使用递归回溯法
-func permute(nums []int) [][]int {
+func permute1(nums []int) [][]int {
 	if len(nums) == 0 {
 		return nil
 	}
@@ -81,4 +81,30 @@ func TestPermute2(t *testing.T) {
 	nums := []int{1, 1, 2, 2}
 	res := permuteUnique(nums)
 	fmt.Println(res)
+}
+
+func permute(nums []int) [][]int {
+	//var tmp []int
+	var res [][]int
+	permuteHelper(0, nums, &res)
+	return res
+}
+
+func permuteHelper(start int, nums []int, res *[][]int) {
+	n := len(nums)
+	if start == n {
+		// 出口已经找到
+		arr := make([]int, n)
+		copy(arr, nums)
+		*res = append(*res, arr)
+		return
+	}
+	for i := start; i < n; i++ {
+		if i == start || nums[i] != nums[start] {
+			nums[start], nums[i] = nums[i], nums[start]
+			permuteHelper(start+1, nums, res)
+			nums[start], nums[i] = nums[i], nums[start]
+		}
+	}
+
 }
