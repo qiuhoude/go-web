@@ -13,7 +13,7 @@ func or(channels ...<-chan interface{}) <-chan interface{} {
 	case 1:
 		return channels[0]
 	}
-
+	// 分治思想, 两个channel合成1个
 	orDone := make(chan interface{})
 	go func() {
 		defer close(orDone)
@@ -24,7 +24,7 @@ func or(channels ...<-chan interface{}) <-chan interface{} {
 			case <-channels[0]:
 			case <-channels[1]:
 			}
-		default:
+		default: //>=3
 			select {
 			case <-channels[0]:
 			case <-channels[1]:
@@ -50,12 +50,13 @@ func main() {
 	start := time.Now()
 
 	<-or(
-		sig(5*time.Second),
 		sig(20*time.Second),
 		sig(30*time.Second),
+		sig(5*time.Second),
 		sig(40*time.Second),
 		sig(50*time.Second),
 		sig(01*time.Minute),
+		sig(3*time.Second),
 	)
 
 	fmt.Printf("done after %v", time.Since(start))
