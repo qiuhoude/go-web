@@ -110,11 +110,22 @@ func TestBST_LevelOrder(t *testing.T) {
 }
 
 func TestBst_MaxDepth(t *testing.T) {
-	bst := generateBST()
+	//bst := generateBST()
+	bst := &BST{}
+	nums := []Integer{Integer(5), Integer(4), Integer(3), Integer(2), Integer(1)}
+	for i := 0; i < len(nums); i++ {
+		bst.Add(nums[i])
+	}
+
 	t.Log("最大深度 ", maxDepth(bst.root))
 }
 func TestBst_MinDepth(t *testing.T) {
-	bst := generateBST()
+	//bst := generateBST()
+	bst := &BST{}
+	nums := []Integer{Integer(5), Integer(4), Integer(3), Integer(2), Integer(1), Integer(6)}
+	for i := 0; i < len(nums); i++ {
+		bst.Add(nums[i])
+	}
 	t.Log("最小深度 ", minDepth(bst.root))
 }
 

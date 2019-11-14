@@ -322,12 +322,6 @@ func maxDepth(n *node) int {
 	if n == nil {
 		return 0
 	}
-	if n.left == nil { // 若左子树为空，则右子树的深度为为该节点的深度
-		return maxDepth(n.right) + 1
-	}
-	if n.right == nil {
-		return maxDepth(n.left) + 1
-	}
 	// 可用理解为是后序遍历
 	// 在跟父点处比较大小
 	leftDepth := maxDepth(n.left)
