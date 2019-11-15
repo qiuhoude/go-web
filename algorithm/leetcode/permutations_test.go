@@ -10,7 +10,7 @@ import (
 //https://leetcode-cn.com/problems/permutations/
 
 // 思路: 使用递归回溯法
-func permute1(nums []int) [][]int {
+func permute(nums []int) [][]int {
 	if len(nums) == 0 {
 		return nil
 	}
@@ -72,38 +72,47 @@ func permuteUnique(nums []int) [][]int {
 }
 
 func TestPermute(t *testing.T) {
-	nums := []int{1, 2, 3, 4}
+	nums := []int{1, 2, 3}
 	res := permute(nums)
 	fmt.Println(res)
 }
 
 func TestPermute2(t *testing.T) {
-	nums := []int{1, 1, 2, 2}
-	res := permuteUnique(nums)
+	nums := []int{1, 1, 1, 2}
+	//res := permuteUnique(nums)
+	res := permuteUnique2(nums)
 	fmt.Println(res)
 }
 
-func permute(nums []int) [][]int {
-	//var tmp []int
+func permuteUnique2(nums []int) [][]int {
 	var res [][]int
-	permuteHelper(0, nums, &res)
+	// 先排序
+	sort.Slice(nums, func(i, j int) bool {
+		return nums[i] < nums[j]
+	})
+	used := make([]bool, len(nums))
+	var stack []int
+	permuteHelper(0, nums, used, stack, &res)
 	return res
 }
 
-func permuteHelper(start int, nums []int, res *[][]int) {
+func permuteHelper(index int, nums []int, used []bool, stack []int, res *[][]int) {
 	n := len(nums)
-	if start == n {
+	if index == n {
 		// 出口已经找到
 		arr := make([]int, n)
-		copy(arr, nums)
+		copy(arr, stack)
 		*res = append(*res, arr)
 		return
 	}
-	for i := start; i < n; i++ {
-		if i == start || nums[i] != nums[start] {
-			nums[start], nums[i] = nums[i], nums[start]
-			permuteHelper(start+1, nums, res)
-			nums[start], nums[i] = nums[i], nums[start]
+	for i := 0; i < n; i++ {
+		if !used[i] {
+			if i > 0 && nums[i] == nums[i-1] && used[i-1] {
+				continue
+			}
+			used[i] = true
+			permuteHelper(index+1, nums, used, append(stack, nums[i]), res)
+			used[i] = false
 		}
 	}
 

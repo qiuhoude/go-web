@@ -172,7 +172,7 @@ func mergeSort(arr []int, p, r int) {
 	if p >= r {
 		return
 	}
-	mid := (p + r) / 2
+	mid := p + ((r - p) >> 1)
 	// 分而治之
 	mergeSort(arr, p, mid)
 	mergeSort(arr, mid+1, r)
