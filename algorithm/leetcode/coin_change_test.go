@@ -1,6 +1,7 @@
 package leetcode
 
 import (
+	"strconv"
 	"testing"
 )
 
@@ -43,9 +44,36 @@ func TestCoinChange(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := CoinCharge(tt.args.coins, tt.args.amount); got != tt.want {
+			if got := CoinCharge2(tt.args.coins, tt.args.amount); got != tt.want {
 				t.Errorf("CoinCharge() = %v, want %v", got, tt.want)
 			}
 		})
+	}
+}
+
+// 递归回溯的写法
+func CoinCharge2(coins []int, amount int) int {
+	ret := strconv.IntSize
+	f(0, 0, amount, coins, &ret)
+	if ret == strconv.IntSize {
+		return -1
+	}
+	return ret
+}
+
+//
+func f(ca, cc, amount int, coin []int, ret *int) {
+	if ca >= amount {
+		if ca == amount { // 有解
+			if cc < *ret {
+				*ret = cc
+			}
+		}
+		return
+	}
+	for i := range coin {
+		if coin[i]+ca <= amount {
+			f(coin[i]+ca, cc+1, amount, coin, ret)
+		}
 	}
 }

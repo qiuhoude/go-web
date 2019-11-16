@@ -1,7 +1,7 @@
 package dp
 
 import (
-	"gopkg.in/go-playground/assert.v1"
+	"github.com/bmizerany/assert"
 	"testing"
 )
 
@@ -18,6 +18,7 @@ func NewPattern(expr string) *Pattern {
 func (p *Pattern) Match(text string) bool { // 文本串及长度
 	p.matched = false
 	p.rmatch(0, 0, []rune(text))
+	//p.rmatchDp([]rune(text))
 	return p.matched
 }
 
@@ -58,11 +59,44 @@ func (p *Pattern) rmatch(ti, pj int, text []rune) {
 }
 
 // 使用动态规划的方式怎么写?
+// 状态 dp [ti][pj]bool 表示ti,pi的位置是否匹配
+func (p *Pattern) rmatchDp(text []rune) {
+	tn := len(text)
+	pn := len(p.pattern)
+
+	dp := make([][]bool, tn)
+	for i := range dp {
+		dp[i] = make([]bool, pn)
+	}
+	// init first line
+	switch p.pattern[0] {
+	case '*':
+		for i := 0; i < pn; i++ {
+			dp[0][i] = true
+		}
+	case '?':
+		dp[0][0] = true
+	case text[0]:
+		dp[0][0] = true
+	}
+	for ti := 1; ti < tn; ti++ {
+		for pi := 0; pi < pn; pi++ {
+			switch p.pattern[pi] {
+			case '*':
+
+			case '?':
+			case text[ti]:
+			}
+		}
+	}
+
+	p.matched = dp[tn-1][pn-1]
+}
 
 func TestMatch(t *testing.T) {
-	pattern := NewPattern("c*htm?")
+	pattern := NewPattern("?c*html?")
 	assert.Equal(t, pattern.Match("chtml"), true)
 	assert.Equal(t, pattern.Match("cxxxxhtml"), true)
-	assert.Equal(t, pattern.Match("cxxxxhtmlc"), false)
+	assert.Equal(t, pattern.Match("xxxxhtm"), false)
 
 }

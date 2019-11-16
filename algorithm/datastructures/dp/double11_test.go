@@ -34,7 +34,7 @@ func double11(w int, price []int) {
 	for i := 1; i < n; i++ { // 遍历每个商品
 		for j := 0; j <= wc; j++ { // 第i个商品不买的情况
 			if states[i-1][j] { // 前一个商品已购买的情况
-				states[i][j+0] = states[i-1][j] // 不购买 j不用加上价格
+				states[i][j] = states[i-1][j] // 不购买 j不用加上价格
 			}
 		}
 
@@ -60,18 +60,23 @@ func double11(w int, price []int) {
 	tmp := min
 	// 逆推有哪些商品
 	sum := 0
-	for i := n - 1; i >= 0; i-- {
-		if tmp-price[i] >= 0 && states[i][tmp-price[i]] {
+	for i := n - 1; i >= 1; i-- {
+		if tmp-price[i] >= 0 && states[i-1][tmp-price[i]] { //states[i-1][tmp-price] 说明购买了
 			// 最小商品价格减去一个商品的价格,去状态表查看中是否有购买,如果有购买就是的
 			fmt.Printf("需要购买第 %v个商品 价格是 %v\n", i, price[i])
 			tmp -= price[i]
 			sum += price[i]
-		}
+		} // states[i-1][tmp] 说明没有被购买
+	}
+	if tmp > 0 && tmp-price[0] == 0 {
+		// 第一个商品也购买
+		fmt.Printf("需要购买第 %v个商品 价格是 %v\n", 0, price[0])
+		sum += price[0]
 	}
 	fmt.Println("sum:", sum)
 }
 
 func TestDouble11(t *testing.T) {
 	sl := []int{3, 5, 7, 1, 2, 8, 9}
-	double11(31, sl)
+	double11(36, sl)
 }
