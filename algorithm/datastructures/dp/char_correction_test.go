@@ -2,7 +2,6 @@ package dp
 
 import (
 	"fmt"
-	"strconv"
 	"testing"
 )
 
@@ -104,7 +103,7 @@ func min3(a, b, c int) int {
 func Test_lvst(t *testing.T) {
 	stri := []rune("mitcmu")
 	strj := []rune("mtacnu")
-	editDis1 := strconv.IntSize
+	editDis1 := 0x7fffffff
 	lvstBT(0, 0, 0, stri, strj, &editDis1)
 	t.Log("最小编辑距离 editDis1:", editDis1)
 

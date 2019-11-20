@@ -40,6 +40,15 @@ func (s *ArrayStack) Pop() interface{} {
 	return ret
 }
 
+func (s *ArrayStack) ToSlice() []interface{} {
+	ret := make([]interface{}, s.top)
+	j := 0
+	for i := s.top - 1; i >= 0; i-- {
+		ret[j] = s.data[i]
+		j++
+	}
+	return ret
+}
 func (s *ArrayStack) Push(value interface{}) {
 	if s.top >= len(s.data) {
 		s.data = append(s.data, value)

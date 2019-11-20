@@ -134,8 +134,8 @@ out:
 			st.Push(cur)
 			cur = prev[cur]
 		}
+		st.Push(sid)
 		ret := make([]int, st.Len())
-
 		for i := 0; !st.IsEmpty(); i++ {
 			ret[i] = st.Pop().(int)
 		}
@@ -196,6 +196,7 @@ out:
 			st.Push(cur)
 			cur = prev[cur]
 		}
+		st.Push(sid)
 		ret := make([]int, st.Len())
 		for i := 0; !st.IsEmpty(); i++ {
 			ret[i] = st.Pop().(int)

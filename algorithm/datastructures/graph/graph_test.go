@@ -20,9 +20,9 @@ func buildGraph() *GraphAdjTab {
 	// 添加边
 	g.AddEdge(1, 4)
 	g.AddEdge(1, 5)
-	g.AddEdge(2, 6)
 	g.AddEdge(2, 7)
 	g.AddEdge(3, 8)
+	g.AddEdge(2, 6)
 	g.AddEdge(3, 9)
 	g.AddEdge(4, 10)
 	g.AddEdge(5, 10)
@@ -35,7 +35,6 @@ func buildGraph() *GraphAdjTab {
 func TestGraphAdjTab_BSTSearch(t *testing.T) {
 	g := buildGraph()
 	path := g.BSTSearch(2, 3)
-	fmt.Printf("(%d)%v", 2, g.GetVertexData(2))
 	for _, v := range path {
 		fmt.Printf("->(%d)%v", v, g.GetVertexData(v))
 	}

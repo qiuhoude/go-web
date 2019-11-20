@@ -2,7 +2,6 @@ package dp
 
 import (
 	"fmt"
-	"strconv"
 	"testing"
 )
 
@@ -99,7 +98,7 @@ func TestMinDis(t *testing.T) {
 		//{6, 8, 4, 23},
 	}
 
-	ret := strconv.IntSize
+	ret := 0x7fffffff
 	minDistBacktracing(0, 0, 0, m, &ret)
 	t.Log(ret)
 
