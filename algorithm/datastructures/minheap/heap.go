@@ -53,7 +53,7 @@ func (h *Heap) Poll() interface{} {
 }
 
 // 移除对应的元素
-func (h *Heap) Remove(e interface{}, eqFunc func(e, b interface{}) bool) bool {
+func (h *Heap) Remove(e interface{}, eqFunc func(e, b interface{}) bool) interface{} {
 	// 1 找到对应元素
 	var find interface{}
 	var fi int
@@ -66,14 +66,14 @@ func (h *Heap) Remove(e interface{}, eqFunc func(e, b interface{}) bool) bool {
 	}
 	if find == nil {
 		//没有找到
-		return false
+		return nil
 	} else {
 		// 与最后一个值进行替换
 		h.swap(fi, h.Len()-1)
 		h.data = h.data[:h.Len()-1] //移除最后一个
 		// 下沉下标
 		h.siftDown(fi)
-		return true
+		return find
 	}
 }
 

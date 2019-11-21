@@ -27,3 +27,8 @@ func (q *PriorityQueue) IsEmpty() bool {
 func (q *PriorityQueue) Len() int {
 	return q.heap.Len()
 }
+
+// 移除对应的值
+func (q *PriorityQueue) Remove(e interface{}, eqFunc func(e, b interface{}) bool) interface{} {
+	return q.heap.Remove(e, eqFunc)
+}
