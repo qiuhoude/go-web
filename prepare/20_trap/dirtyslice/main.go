@@ -13,7 +13,15 @@ func main() {
 
 	//testAppend2()
 
-	testAppend3()
+	//testAppend3()
+
+	// 不会发生panic
+	v := []int{1, 2, 3}
+	for i := range v {
+		v = append(v, i)
+	}
+
+	fmt.Println(v)
 }
 
 func testAppend3() {

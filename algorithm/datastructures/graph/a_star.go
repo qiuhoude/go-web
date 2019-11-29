@@ -175,13 +175,13 @@ out:
 }
 
 func printMap(m [][]uint) {
-	fmt.Printf("%4d", -1)
-	for i := 0; i < len(m[0]); i++ {
-		fmt.Printf("%4d", i)
-	}
-	fmt.Println()
+	//fmt.Printf("%4d", -1)
+	//for i := 0; i < len(m[0]); i++ {
+	//	fmt.Printf("%4d", i)
+	//}
+	//fmt.Println()
 	for i := range m {
-		fmt.Printf("%4d", i)
+		//fmt.Printf("%4d", i)
 		for j := range m[i] {
 			if j != 0 {
 			}

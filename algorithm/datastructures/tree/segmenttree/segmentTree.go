@@ -7,6 +7,16 @@ import (
 
 type MergeFunc func(l, r interface{}) interface{}
 
+/*
+               [1,  6]
+             /        \
+      [1,  3]           [4,  6]
+      /     \           /     \
+   [1, 2]  [3,3]     [4, 5]   [6,6]
+   /    \           /     \
+[1,1]   [2,2]     [4,4]   [5,5]
+
+*/
 type SegmentTree struct {
 	data  []interface{} // 线段数存储的数据
 	tree  []interface{}
