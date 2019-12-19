@@ -47,8 +47,16 @@ func showMemberList(cli *clientv3.Client) {
 		log.Fatal(err)
 	}
 	databytes, err := json.MarshalIndent(resp.Members, "", "	")
-
 	fmt.Println("members:", string(databytes))
+	for _, member := range resp.Members {
+		status, err := cli.Status(context.TODO(), member.ClientURLs[0])
+		if err != nil {
+			fmt.Println(err)
+			continue
+		}
+		fmt.Println(status)
+	}
+
 }
 
 func addMember(cli *clientv3.Client) {
