@@ -117,6 +117,28 @@ func BSearchFirst(arr []int, val int) int {
 	return -1
 }
 
+// 烧脑的写法
+func BSearchFirst2(arr []int, val int) int {
+	n := len(arr)
+	if n < 1 {
+		return -1
+	}
+	low := 0
+	high := n - 1
+	for low <= high {
+		mid := low + ((high - low) >> 1)
+		if arr[mid] >= val {
+			high = mid - 1
+		} else {
+			low = mid + 1
+		}
+	}
+	if arr[low] == val {
+		return low
+	}
+	return -1
+}
+
 /*
 变体2：查找最后一个值等于给定值的元素
 */
@@ -170,6 +192,25 @@ func BSearchFirstGeVal(arr []int, val int) int {
 		}
 	}
 	return -1
+}
+
+// 查找第一个大于 给定值的下标
+func BSearchFirstGVal(arr []int, val int) int {
+	n := len(arr)
+	if n < 1 {
+		return -1
+	}
+	low := 0
+	high := n - 1
+	for low <= high {
+		mid := low + ((high - low) >> 1)
+		if arr[mid] > val {
+			high = mid - 1
+		} else {
+			low = mid + 1
+		}
+	}
+	return low
 }
 
 /*

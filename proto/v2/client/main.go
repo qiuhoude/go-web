@@ -8,7 +8,10 @@ import (
 	"github.com/gogo/protobuf/proto"
 	"github.com/qiuhoude/go-web/proto/v2/models"
 	"io"
+	"io/ioutil"
+	"log"
 	"net"
+	"net/http"
 	"os"
 	"time"
 )
@@ -21,9 +24,59 @@ const (
 var Version = "No Version Provided ..."
 
 func main() {
+	info := getLoginInfo("ax1", "000")
+	tcp(1, *info.KeyId, *info.Token)
+}
+
+func getLoginInfo(account, pwd string) *models.DoLoginRs {
+
+	basePb := &models.Base{
+		Cmd: proto.Int32(models.E_DoLoginRq_Ext.Field),
+	}
+	dataPb := &models.DoLoginRq{
+		Sid:         proto.String(fmt.Sprintf("%s_%s", account, pwd)),
+		BaseVersion: proto.String("1.4.0"),
+		Version:     proto.String("1.0.0"),
+		DeviceNo:    proto.String("00000000-2625-0b64-7b72-55e30033c587"),
+		Plat:        proto.String("self"),
+	}
+	err := proto.SetExtension(basePb, models.E_DoLoginRq_Ext, dataPb)
+
+	pbData, _ := proto.Marshal(basePb)
+	url := "http://192.168.1.151:9200/honor_account/account/account.do"
+	buf := new(bytes.Buffer)
+	length := uint16(len(pbData))
+	_ = binary.Write(buf, binary.BigEndian, length)
+	_ = binary.Write(buf, binary.BigEndian, pbData)
+
+	resp, err := http.Post(url, "application/octet-stream", buf)
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer resp.Body.Close()
+	if resp.StatusCode == http.StatusOK {
+		body, err := ioutil.ReadAll(resp.Body)
+		if err != nil {
+			log.Fatal(err)
+		}
+		resBuf := bytes.NewBuffer(body)
+		var length uint16
+		_ = binary.Read(resBuf, binary.BigEndian, &length)
+		resBasePb := &models.Base{}
+		_ = proto.Unmarshal(resBuf.Bytes(), resBasePb)
+		fmt.Println(resBasePb)
+		extension, _ := proto.GetExtension(resBasePb, models.E_DoLoginRs_Ext)
+		res := extension.(*models.DoLoginRs)
+		return res
+	}
+	log.Fatal("未获取到Token")
+	return nil
+}
+
+func tcp(serverId int32, keyId int64, token string) {
 	fmt.Println("Client Version is:", Version)
 	//go run -ldflags "-X main.Version=1.6.6" main.go 编译版本
-	strIP := "127.0.0.1:9201"
+	strIP := "192.168.1.151:9201"
 	var conn net.Conn
 	var err error
 	addr, err := net.ResolveTCPAddr("tcp", strIP)
@@ -37,25 +90,26 @@ func main() {
 	fmt.Println("connect", strIP, "success")
 	defer conn.Close()
 
-	writer := bufio.NewWriter(conn)
+	//writer := bufio.NewWriter(conn)
 	// 开个协程进行读数据
-	go recvMsg(conn)
+	fc := warpConn(conn)
+	go recvMsg2(fc)
 
-	sendbegin(writer)
+	_ = fc.WriteFrame(begin(serverId, keyId, token))
 	time.AfterFunc(3*time.Second, func() {
-		sendlogin(writer)
+		_ = fc.WriteFrame(login())
 	})
 
 	sender := bufio.NewScanner(os.Stdin)
 	for sender.Scan() {
-		sendChatMsg(writer, sender.Text())
+		_ = fc.WriteFrame(chatMsg(sender.Text()))
 		if sender.Text() == "stop" {
 			return
 		}
 	}
 }
 
-func sendChatMsg(writer *bufio.Writer, msg string) {
+func chatMsg(msg string) []byte {
 	basePb := &models.Base{
 		Cmd: proto.Int32(models.E_SendChatRq_Ext.Field),
 	}
@@ -63,37 +117,35 @@ func sendChatMsg(writer *bufio.Writer, msg string) {
 		Channel: proto.Int32(1),
 		Content: []string{msg},
 	}
-	proto.SetExtension(basePb, models.E_SendChatRq_Ext, dataPb)
+	_ = proto.SetExtension(basePb, models.E_SendChatRq_Ext, dataPb)
 	bdata, _ := proto.Marshal(basePb)
-	sendMsg(writer, bdata)
+	return bdata
 }
 
-func sendlogin(writer *bufio.Writer) {
+func login() []byte {
 	basePb := &models.Base{
 		Cmd: proto.Int32(models.E_RoleLoginRq_Ext.Field),
 	}
 	dataPb := &models.RoleLoginRq{}
-	proto.SetExtension(basePb, models.E_RoleLoginRq_Ext, dataPb)
+	_ = proto.SetExtension(basePb, models.E_RoleLoginRq_Ext, dataPb)
 	bdata, _ := proto.Marshal(basePb)
-	sendMsg(writer, bdata)
+	return bdata
 }
 
-func sendbegin(writer *bufio.Writer) {
-
+func begin(serverId int32, keyId int64, token string) []byte {
 	basePb := &models.Base{
 		Cmd: proto.Int32(models.E_BeginGameRq_Ext.Field),
 	}
 	beginRqPb := &models.BeginGameRq{
-		ServerId:   proto.Int32(5),
-		KeyId:      proto.Int64(53248),
-		Token:      proto.String(`eb00937b79dc45a18494a1e357334ec7`),
+		ServerId:   proto.Int32(serverId),
+		KeyId:      proto.Int64(keyId),
+		Token:      proto.String(token),
 		DeviceNo:   proto.String(`00000000-2625-0b64-7b72-55e30033c587`),
 		CurVersion: proto.String(`1.0.0`),
 	}
-	proto.SetExtension(basePb, models.E_BeginGameRq_Ext, beginRqPb)
+	_ = proto.SetExtension(basePb, models.E_BeginGameRq_Ext, beginRqPb)
 	beginData, _ := proto.Marshal(basePb)
-	sendMsg(writer, beginData)
-
+	return beginData
 }
 
 func sendMsg(writer *bufio.Writer, data []byte) error {

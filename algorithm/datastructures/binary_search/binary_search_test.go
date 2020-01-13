@@ -10,13 +10,18 @@ func TestBSearch(t *testing.T) {
 	t.Log(i2)
 	first := BSearchFirst(arr, 8)
 	t.Log("first:", first)
+	first2 := BSearchFirst2(arr, 8)
+	t.Log("first2:", first2)
 	last := BSearchLast(arr, 8)
 	t.Log("last:", last)
 	// 第一个大于等于
-	fge := BSearchFirstGeVal(arr, 18)
+	fge := BSearchFirstGeVal(arr, 8)
 	t.Log("fge:", fge)
 
-	lle := BSearchLastLeVal(arr, 18)
+	fg := BSearchFirstGVal(arr, 3)
+	t.Log("fg:", fg)
+
+	lle := BSearchLastLeVal(arr, 8)
 	t.Log("lle:", lle)
 
 }

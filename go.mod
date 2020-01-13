@@ -24,14 +24,20 @@ require (
 	github.com/jinzhu/inflection v0.0.0-20190603042836-f5c5f50e6090 // indirect
 	github.com/jmoiron/sqlx v1.2.0
 	github.com/orcaman/concurrent-map v0.0.0-20190826125027-8c72a8bb44f6 // indirect
+	github.com/panjf2000/ants/v2 v2.2.2 // indirect
+	github.com/pelletier/go-toml v1.6.0 // indirect
 	github.com/prometheus/common v0.7.0
 	github.com/rcrowley/go-metrics v0.0.0-20190826022208-cac0b30c2563
 	github.com/russross/blackfriday v1.5.2
 	github.com/serialx/hashring v0.0.0-20190515033939-7706f26af194 // indirect
 	github.com/smallnest/epoller v0.0.0-20190530062813-ac15129c1ee5
+	github.com/smallnest/goframe v0.0.0-20191101094441-1fbd8e51db18
 	github.com/smallnest/redcon v0.9.0
 	github.com/smartystreets/go-disruptor v0.0.0-20180723194425-e0f8f9247cc2
 	github.com/sourcegraph/syntaxhighlight v0.0.0-20170531221838-bd320f5d308e
+	github.com/spf13/cast v1.3.1 // indirect
+	github.com/spf13/jwalterweatherman v1.1.0 // indirect
+	github.com/spf13/viper v1.6.1 // indirect
 	github.com/stretchr/testify v1.4.0
 	github.com/uber/jaeger-client-go v2.20.1+incompatible // indirect
 	github.com/uber/jaeger-lib v2.2.0+incompatible // indirect
@@ -40,8 +46,10 @@ require (
 	go.uber.org/atomic v1.5.1 // indirect
 	golang.org/x/lint v0.0.0-20191125180803-fdd1cda4f05f // indirect
 	golang.org/x/net v0.0.0-20191209160850-c0dbc17a3553 // indirect
-	golang.org/x/sys v0.0.0-20191210023423-ac6580df4449
+	golang.org/x/sys v0.0.0-20200107162124-548cf772de50
 	golang.org/x/tools v0.0.0-20191217033636-bbbf87ae2631 // indirect
 	google.golang.org/genproto v0.0.0-20191216205247-b31c10ee225f // indirect
 	gopkg.in/go-playground/assert.v1 v1.2.1
+	gopkg.in/ini.v1 v1.51.1 // indirect
+	gopkg.in/yaml.v2 v2.2.7 // indirect
 )

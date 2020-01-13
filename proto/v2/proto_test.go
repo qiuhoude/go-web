@@ -14,17 +14,14 @@ import (
 
 // 打印pb文件中所有协议
 func TestBase(t *testing.T) {
-
-	basePb := &models.Base{}
-
-	extMap := proto.RegisteredExtensions((*models.Base)(basePb))
+	extMap := proto.RegisteredExtensions((*models.Base)(nil))
 
 	var extSlice []*proto.ExtensionDesc
 	for _, v := range extMap {
-		st := reflect.TypeOf(v.ExtensionType).Elem()
-		if strings.HasSuffix(st.Name(), "Rs") {
-			continue
-		}
+		//st := reflect.TypeOf(v.ExtensionType).Elem()
+		//if strings.HasSuffix(st.Name(), "Rs") {
+		//	continue
+		//}
 		extSlice = append(extSlice, v)
 	}
 
@@ -34,6 +31,7 @@ func TestBase(t *testing.T) {
 	for _, v := range extSlice {
 		fmt.Println(v.Field, v.Name)
 		printFiled(reflect.TypeOf(v.ExtensionType).Elem())
+		//printFiledJson(v)
 	}
 
 }
@@ -48,12 +46,35 @@ func printFiled(t reflect.Type) {
 	}
 }
 
-func TestJsonToPb(t *testing.T) {
+func printFiledJson(pbDesc *proto.ExtensionDesc) {
+	t := reflect.TypeOf(pbDesc.ExtensionType).Elem()
+	var sb strings.Builder
+	sb.WriteString("{")
+	for i := 0; i < t.NumField(); i++ {
+		field := t.Field(i)
+		if !strings.HasPrefix(field.Name, "XXX_") {
+			jsonName := strings.Split(field.Tag.Get("json"), ",")[0]
 
-	oldStruct := &models.CrossMoveCityRq{
-		MapId: proto.Int32(26),
-		Type:  proto.Int32(1),
-		Pos:   proto.Int32(11),
+			_, _ = fmt.Fprintf(&sb, `"%s"`, jsonName)
+
+		}
+	}
+	sb.WriteString("}")
+}
+
+func TestJsonToPb(t *testing.T) {
+	twoIntSlice := make([]*models.TwoInt, 0)
+	for i := 0; i < 2; i++ {
+		twoIntSlice = append(twoIntSlice, &models.TwoInt{
+			V1: proto.Int32(1),
+			V2: proto.Int32(2),
+		})
+	}
+
+	oldStruct := &models.GetTreasureRs{
+		IdStatus: twoIntSlice,
+		Status:   proto.Int32(1),
+		Red:      proto.Bool(false),
 	}
 
 	dataJ, err := json.Marshal(oldStruct)
@@ -63,7 +84,7 @@ func TestJsonToPb(t *testing.T) {
 	}
 	fmt.Println(string(dataJ))
 	extMap := proto.RegisteredExtensions((*models.Base)(nil))
-	extensionDescPrt := extMap[6021]
+	extensionDescPrt := extMap[1256]
 
 	newStruct := NewStruct(reflect.TypeOf(extensionDescPrt.ExtensionType))
 
@@ -73,16 +94,10 @@ func TestJsonToPb(t *testing.T) {
 	//	fields = append(fields, etype.Field(i))
 	//}
 	//
-	//newStruct := CreateStruct(fields)
-	nullstruct := &models.CrossMoveCityRq{}
-	fmt.Println("--value ", reflect.ValueOf(nullstruct).Elem().Type())
-	fmt.Println("--type ", reflect.TypeOf(extensionDescPrt.ExtensionType).Elem())
-
-	//newStruct := reflect.New(reflect.TypeOf(extensionDescPrt.ExtensionType).Elem()).Interface().(proto.Message)
 
 	fmt.Printf("newStruct %T %v\n", newStruct, newStruct)
 
-	json.Unmarshal(dataJ, &newStruct)
+	_ = json.Unmarshal(dataJ, &newStruct)
 
 	fmt.Printf("oldStruct %T %v\n", oldStruct, oldStruct)
 	fmt.Printf("newStruct %T %v\n", newStruct, newStruct)
