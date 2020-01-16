@@ -25,7 +25,53 @@ var Version = "No Version Provided ..."
 
 func main() {
 	info := getLoginInfo("ax1", "000")
-	tcp(1, *info.KeyId, *info.Token)
+	serverList(info.GetKeyId())
+	//tcp(1, *info.KeyId, *info.Token)
+}
+
+func serverList(accountKey int64) {
+	basePb := &models.Base{
+		Cmd: proto.Int32(models.E_ServerListRq_Ext.Field),
+	}
+	dataPb := &models.ServerListRq{
+		AccountKey: proto.Int64(accountKey),
+	}
+	_ = proto.SetExtension(basePb, models.E_DoLoginRq_Ext, dataPb)
+	pbData, _ := proto.Marshal(basePb)
+	url := "http://192.168.1.151:9200/honor_account/account/account.do"
+	resp, err := http.Post(url, "application/octet-stream", bytes.NewReader(encode(pbData)))
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer resp.Body.Close()
+	if resp.StatusCode == http.StatusOK {
+		body, err := ioutil.ReadAll(resp.Body)
+		if err != nil {
+			log.Fatal(err)
+		}
+		resBasePb := &models.Base{}
+		_ = proto.Unmarshal(decode(body), resBasePb)
+		fmt.Println(resBasePb)
+		extension, _ := proto.GetExtension(resBasePb, models.E_ServerListRs_Ext)
+		res := extension.(*models.ServerListRs)
+		fmt.Printf("%v\n", res)
+	}
+
+}
+
+func encode(data []byte) []byte {
+	buf := new(bytes.Buffer)
+	length := uint16(len(data))
+	_ = binary.Write(buf, binary.BigEndian, length)
+	_ = binary.Write(buf, binary.BigEndian, data)
+	return buf.Bytes()
+}
+
+func decode(data []byte) []byte {
+	buf := bytes.NewBuffer(data)
+	var length uint16
+	_ = binary.Read(buf, binary.BigEndian, &length)
+	return buf.Bytes()
 }
 
 func getLoginInfo(account, pwd string) *models.DoLoginRs {
@@ -44,12 +90,7 @@ func getLoginInfo(account, pwd string) *models.DoLoginRs {
 
 	pbData, _ := proto.Marshal(basePb)
 	url := "http://192.168.1.151:9200/honor_account/account/account.do"
-	buf := new(bytes.Buffer)
-	length := uint16(len(pbData))
-	_ = binary.Write(buf, binary.BigEndian, length)
-	_ = binary.Write(buf, binary.BigEndian, pbData)
-
-	resp, err := http.Post(url, "application/octet-stream", buf)
+	resp, err := http.Post(url, "application/octet-stream", bytes.NewReader(encode(pbData)))
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -59,11 +100,8 @@ func getLoginInfo(account, pwd string) *models.DoLoginRs {
 		if err != nil {
 			log.Fatal(err)
 		}
-		resBuf := bytes.NewBuffer(body)
-		var length uint16
-		_ = binary.Read(resBuf, binary.BigEndian, &length)
 		resBasePb := &models.Base{}
-		_ = proto.Unmarshal(resBuf.Bytes(), resBasePb)
+		_ = proto.Unmarshal(decode(body), resBasePb)
 		fmt.Println(resBasePb)
 		extension, _ := proto.GetExtension(resBasePb, models.E_DoLoginRs_Ext)
 		res := extension.(*models.DoLoginRs)
@@ -75,7 +113,7 @@ func getLoginInfo(account, pwd string) *models.DoLoginRs {
 
 func tcp(serverId int32, keyId int64, token string) {
 	fmt.Println("Client Version is:", Version)
-	//go run -ldflags "-X main.Version=1.6.6" main.go 编译版本
+	//go run -ldflags "-X main.Version=1.6.6" client.go 编译版本
 	strIP := "192.168.1.151:9201"
 	var conn net.Conn
 	var err error

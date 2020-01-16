@@ -6,6 +6,7 @@ import (
 	"io"
 	"log"
 	"net"
+	"net/http"
 	"net/url"
 	"strings"
 )
@@ -65,7 +66,7 @@ func handleClientRequest(client net.Conn) {
 		log.Println(err)
 		return
 	}
-	if method == "CONNECT" {
+	if method == http.MethodConnect {
 		fmt.Fprint(client, "HTTP/1.1 200 Connection established\r\n\r\n")
 	} else {
 		server.Write(b[:n])

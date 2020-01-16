@@ -5,7 +5,7 @@ import (
 	"strings"
 )
 
-// 数组站
+// 数组栈
 type ArrayStack struct {
 	top  int
 	data []interface{}

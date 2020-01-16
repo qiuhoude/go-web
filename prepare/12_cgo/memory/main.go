@@ -6,7 +6,7 @@ import (
 )
 
 // 有bug 对count变量的访问并没有形成临界区
-// go run -race main.go
+// go run -race client.go
 func main() {
 	var wg sync.WaitGroup
 	var count int
