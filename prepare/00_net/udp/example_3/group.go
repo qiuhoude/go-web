@@ -9,7 +9,7 @@ import (
 
 // 组播的例子
 func main() {
-	//interfaces, _ := net.Interfaces()
+	//interfaces, _ := net.Interfaces() // 获取机器网卡
 	//for i := range interfaces {
 	//	fmt.Println(interfaces[i])
 	//}

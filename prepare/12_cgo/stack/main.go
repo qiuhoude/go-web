@@ -1,7 +1,5 @@
 package main
 
-import "time"
-
 // 使用进行编译
 // go tool compile -l -N -S client.go 生成main.o
 // go tool objdump main.o 进行反编译  go tool objdump -s main main.o ; -s指定方法
@@ -9,6 +7,6 @@ import "time"
 func main() {
 	//main()
 
-	time.Parse()
+	//time.Parse()
 
 }

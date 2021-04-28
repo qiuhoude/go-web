@@ -69,8 +69,29 @@ func main() {
 		args := []reflect.Value{reflect.ValueOf("prefix--3")}
 		printMethod.Call(args)
 	}
+	fmt.Println("------------------ ")
+	//Implements
+	demoImplements()
 
+	fmt.Println("------------------ ")
 	println("结束.....")
+}
+
+type CustomError struct{}
+
+func (*CustomError) Error() string {
+	return ""
+}
+
+func demoImplements() {
+	fmt.Println("------------------ ")
+	typeOfError := reflect.TypeOf((*error)(nil)).Elem()
+	customErrorPtr := reflect.TypeOf(&CustomError{})
+	customError := reflect.TypeOf(CustomError{})
+
+	// 反射检查 是否实现了某个接口,
+	fmt.Println(customErrorPtr.Implements(typeOfError)) // #=> true
+	fmt.Println(customError.Implements(typeOfError))    // #=> false
 }
 
 // ---------------------type---------------------

@@ -2,8 +2,8 @@ package unsafe
 
 import (
 	"fmt"
-	"reflect"
 	"testing"
+	"time"
 	"unsafe"
 )
 
@@ -19,33 +19,52 @@ func TestSizeOf(t *testing.T) {
 }
 
 func TestAlignof(t *testing.T) {
-	var b bool
-	var i8 int8
-	var i16 int16
-	var i32 int32
-	var i64 int64
+	//var b bool
+	//var i8 int8
+	//var i16 int16
+	//var i32 int32
+	//var i64 int64
+	//
+	//var f32 float32
+	//
+	//var s string
+	//
+	//var m map[string]string
+	//
+	//var p *int32
+	////Alignof 返回一个类型的对齐值，也可以叫做对齐系数或者对齐倍数。
+	//// 对齐值是一个和内存对齐有关的值，合理的内存对齐可以提高内存读写的性能
+	//// unsafe.Alignof(x) 等价于 reflect.TypeOf(x).Align()
+	//fmt.Printf("%T %v\n", b, unsafe.Alignof(b))
+	//fmt.Printf("%T %v\n", i8, unsafe.Alignof(i8))
+	//fmt.Printf("%T %v\n", i16, unsafe.Alignof(i16))
+	//fmt.Printf("%T %v\n", i32, unsafe.Alignof(i32))
+	//fmt.Printf("%T %v\n", i64, unsafe.Alignof(i64))
+	//fmt.Printf("%T %v\n", f32, unsafe.Alignof(f32))
+	//fmt.Printf("%T %v\n", s, unsafe.Alignof(s))
+	//fmt.Printf("%T %v\n", m, unsafe.Alignof(m))
+	//fmt.Printf("%T %v\n", p, unsafe.Alignof(p))
+	//fmt.Printf("%T %v\n", p, reflect.TypeOf(p).Align())
+	//fmt.Printf("%T %v\n", p, unsafe.Alignof(p))
 
-	var f32 float32
+	ti, _ := time.ParseInLocation("2006-01-02 15:04:05", "2016-06-13 15:34:39", time.Local)
+	// 整点（向下取整）
+	fmt.Println(ti.Truncate(1 * time.Hour))
+	// 整点（最接近）
+	fmt.Println(ti.Round(1 * time.Hour))
 
-	var s string
+	// 整分（向下取整）
+	fmt.Println(ti.Truncate(1 * time.Minute))
+	// 整分（最接近）
+	fmt.Println(ti.Round(1 * time.Minute))
 
-	var m map[string]string
+	t2, _ := time.ParseInLocation("2006-01-02 15:04:05", ti.Format("2006-01-02 15:00:00"), time.Local)
+	fmt.Println(t2)
+	timer := time.NewTimer(5 * time.Second)
+	<-timer.C
+	ticker := time.NewTicker(5 * time.Second)
+	<-ticker.C
 
-	var p *int32
-	//Alignof 返回一个类型的对齐值，也可以叫做对齐系数或者对齐倍数。
-	// 对齐值是一个和内存对齐有关的值，合理的内存对齐可以提高内存读写的性能
-	// unsafe.Alignof(x) 等价于 reflect.TypeOf(x).Align()
-	fmt.Printf("%T %v\n", b, unsafe.Alignof(b))
-	fmt.Printf("%T %v\n", i8, unsafe.Alignof(i8))
-	fmt.Printf("%T %v\n", i16, unsafe.Alignof(i16))
-	fmt.Printf("%T %v\n", i32, unsafe.Alignof(i32))
-	fmt.Printf("%T %v\n", i64, unsafe.Alignof(i64))
-	fmt.Printf("%T %v\n", f32, unsafe.Alignof(f32))
-	fmt.Printf("%T %v\n", s, unsafe.Alignof(s))
-	fmt.Printf("%T %v\n", m, unsafe.Alignof(m))
-	fmt.Printf("%T %v\n", p, unsafe.Alignof(p))
-	fmt.Printf("%T %v\n", p, reflect.TypeOf(p).Align())
-	fmt.Printf("%T %v\n", p, unsafe.Alignof(p))
 }
 
 type user1 struct {

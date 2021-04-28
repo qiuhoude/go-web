@@ -186,12 +186,23 @@ func begin(serverId int32, keyId int64, token string) []byte {
 	return beginData
 }
 
+type wirter struct {
+	w   *bufio.Writer
+	err error
+}
+
+func (w *wirter) write(v interface{}) {
+	if w.err == nil {
+		w.err = binary.Write(w.w, binary.BigEndian, v)
+	}
+}
+
 func sendMsg(writer *bufio.Writer, data []byte) error {
-	var err error
-	err = binary.Write(writer, binary.BigEndian, int32(len(data)))
-	err = binary.Write(writer, binary.BigEndian, data)
-	writer.Flush()
-	return err
+	w := wirter{w: writer}
+	w.write(int32(len(data)))
+	w.write(data)
+	w.err = writer.Flush()
+	return w.err
 }
 
 func recvMsg(conn net.Conn) {
