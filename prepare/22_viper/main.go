@@ -1,4 +1,4 @@
-package _2_viper
+package main
 
 import (
 	"fmt"
@@ -29,6 +29,10 @@ func main() {
 			fmt.Println("update", viper.GetString(`app.name`))
 		})
 	}()
+	viper.SetEnvPrefix("houde")
+	viper.AutomaticEnv("redis.port")
+	viper.BindEnv("go.path", "GOPATH")
+	fmt.Println("--------->", viper.GetString(`go.path`))
 
 	fmt.Println("获取配置文件的string", viper.GetString(`app.name`))
 	fmt.Println("获取配置文件的string", viper.GetInt(`app.foo`))

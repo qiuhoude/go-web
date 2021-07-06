@@ -12,7 +12,13 @@ func main() {
 	//alignof()
 	//offsetof()
 	//offsetof2()
-	unsafePoint()
+	//unsafePoint()
+	s := make([]int, 9, 20)
+	var Len = *(*int)(unsafe.Pointer(uintptr(unsafe.Pointer(&s)) + unsafe.Sizeof(int(0))))
+	fmt.Println(Len, len(s)) // 9 9
+
+	var Cap = *(*int)(unsafe.Pointer(uintptr(unsafe.Pointer(&s)) + unsafe.Sizeof(int(0)) + unsafe.Sizeof(int(0))))
+	fmt.Println(Cap, cap(s)) // 20 20
 }
 
 func unsafePoint() {

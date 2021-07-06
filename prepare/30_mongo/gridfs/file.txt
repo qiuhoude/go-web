@@ -1,0 +1,40 @@
+
+-- -- 登录平台参数
+LOGIN_PLATFORM_PARAM = "self"
+
+-- -- --内网开发@@@@@@@@@@@@@@@@
+GameConfig.accountAddress = "http://192.168.1.151:9200/"
+GameConfig.accountURL = "http://192.168.1.151:9200/honor_account/account/account.do"
+GameConfig.areaURL = "http://192.168.1.151:8080/serverlist.json"
+GameConfig.noticeURL = "http://192.168.1.151:9200/honor_account/account/getnotice.do?plat=self"
+GameConfig.qqGroupURL = "http://192.168.1.151:9200/honor_account/account/getJoinGroupCfg.do?plat=self"
+GameConfig.downRootURL = "http://119.29.133.112/version2/"
+
+--合服开发
+--  GameConfig.accountURL = "http://123.207.108.26:9200/honor_account/account/account.do"
+--  GameConfig.areaURL = "http://123.207.108.26:80/serverlist.json"
+ 
+-- -- --现代战争 版号服
+-- GameConfig.accountURL = "http://182.254.230.84:9200/honor_account/account/account.do"
+-- GameConfig.areaURL = "http://182.254.230.84/serverlist_mw.json"
+
+-- ----预发布地址
+-- GameConfig.accountURL = "http://119.29.133.112:9200/honor_account/account/account.do"
+-- GameConfig.accountAddress = "http://119.29.133.112:9200/"
+-- GameConfig.areaURL = "http://119.29.133.112/serverlist_honor.json"
+-- GameConfig.downRootURL = "http://119.29.133.112/version2/"
+-- GameConfig.noticeURL = "http://119.29.133.112:9200/honor_account/account/getnotice.do?plat=self"
+-- GameConfig.qqGroupURL = "http://119.29.133.112:9200/honor_account/account/getJoinGroupCfg.do?plat=self"
+
+-- GameConfig.accountURL = "http://muzhionline.honor.hundredcent.com:9200/honor_account/account/account.do"
+-- GameConfig.accountAddress = "http://muzhionline.honor.hundredcent.com:9200/"
+-- GameConfig.areaURL = "http://muzhionline.honor.hundredcent.com/serverlist_honor.json"
+-- GameConfig.downRootURL = "http://cdn.muzhionline.honor.hundredcent.com/version/"
+-- GameConfig.verifyURL = "http://muzhionline.honor.hundredcent.com/version/tankglory_ios_test.json"
+------消息推送地址
+--GameConfig.pushURL = "http://muzhionline.honor.hundredcent.com:9113"
+
+
+function getPayCallBackUrl()
+    return "http://self.empire.hundredcent.com:9100/tank_account/account/payCallback.do?plat=self"
+end

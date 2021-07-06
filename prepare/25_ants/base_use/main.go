@@ -82,7 +82,7 @@ func customPoolDemo(runTimes int) {
 }
 
 func main() {
-	//commonPoolDemo(100)
+	commonPoolDemo(100)
 	//funcPoolDemo(100)
-	customPoolDemo(100)
+	//customPoolDemo(100)
 }
