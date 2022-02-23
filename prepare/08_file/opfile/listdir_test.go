@@ -6,16 +6,21 @@ import (
 )
 
 func TestListDir(t *testing.T) {
-	listDir("/project")
+	listFile := listDir(".")
+	for _, fName := range listFile {
+		t.Log(fName)
+	}
 }
 
-func listDir(dirName string) {
+func listDir(dirName string) []string {
+	var rt []string
 	fileInfos, _ := ioutil.ReadDir(dirName)
 	for _, fi := range fileInfos {
 		fileName := dirName + "/" + fi.Name()
-		//fmt.Println(fileName)
+		rt = append(rt, fileName)
 		if fi.IsDir() {
-			listDir(fileName)
+			rt = append(rt, listDir(fileName)...)
 		}
 	}
+	return rt
 }

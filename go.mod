@@ -52,6 +52,7 @@ require (
 	github.com/uber/jaeger-client-go v2.29.1+incompatible
 	github.com/uber/jaeger-lib v2.2.0+incompatible
 	github.com/vrischmann/go-metrics-influxdb v0.0.0-20190912142519-b52bc0cb4bc6 // indirect
+	github.com/yuin/gopher-lua v0.0.0-20210529063254-f4c35e4016d9 // indirect
 	go.etcd.io/etcd v3.3.13+incompatible
 	go.mongodb.org/mongo-driver v1.5.4 // indirect
 	go.uber.org/atomic v1.5.1 // indirect
