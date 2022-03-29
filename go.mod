@@ -18,19 +18,16 @@ require (
 	github.com/gin-contrib/sse v0.1.0 // indirect
 	github.com/gin-gonic/gin v1.4.0
 	github.com/go-sql-driver/mysql v1.5.0
-	github.com/gogo/protobuf v1.3.1
+	github.com/gogo/protobuf v1.3.2
 	github.com/golang/mock v1.3.1
 	github.com/hashicorp/go-rootcerts v1.0.2 // indirect
-	github.com/influxdata/influxdb1-client v0.0.0-20190809212627-fc22c7df067e // indirect
 	github.com/jbrukh/bayesian v0.0.0-20190218043818-13a316171413
 	github.com/jinzhu/gorm v1.9.8
 	github.com/jinzhu/inflection v0.0.0-20190603042836-f5c5f50e6090 // indirect
 	github.com/jmoiron/sqlx v1.2.0
-	github.com/minio/highwayhash v1.0.0 // indirect
-	github.com/nats-io/gnatsd v1.4.1 // indirect
-	github.com/nats-io/nats-server v1.4.1 // indirect
-	github.com/nats-io/nats.go v1.11.0 // indirect
-	github.com/opentracing/opentracing-go v1.2.0 // indirect
+	github.com/nats-io/nats-server/v2 v2.7.4 // indirect
+	github.com/nats-io/nats.go v1.13.1-0.20220308171302-2f2f6968e98d
+	github.com/opentracing/opentracing-go v1.2.0
 	github.com/orcaman/concurrent-map v0.0.0-20190826125027-8c72a8bb44f6 // indirect
 	github.com/panjf2000/ants/v2 v2.2.2
 	github.com/prometheus/common v0.7.0
@@ -51,17 +48,14 @@ require (
 	github.com/stretchr/testify v1.7.0
 	github.com/uber/jaeger-client-go v2.29.1+incompatible
 	github.com/uber/jaeger-lib v2.2.0+incompatible
-	github.com/vrischmann/go-metrics-influxdb v0.0.0-20190912142519-b52bc0cb4bc6 // indirect
-	github.com/yuin/gopher-lua v0.0.0-20210529063254-f4c35e4016d9 // indirect
 	go.etcd.io/etcd v3.3.13+incompatible
-	go.mongodb.org/mongo-driver v1.5.4 // indirect
+	go.mongodb.org/mongo-driver v1.5.4
 	go.uber.org/atomic v1.5.1 // indirect
 	golang.org/x/lint v0.0.0-20191125180803-fdd1cda4f05f // indirect
-	golang.org/x/net v0.0.0-20210226172049-e18ecbb05110
-	golang.org/x/sys v0.0.0-20201119102817-f84b799fce68
-	golang.org/x/tools v0.0.0-20191217033636-bbbf87ae2631 // indirect
+	golang.org/x/net v0.0.0-20211112202133-69e39bad7dc2
+	golang.org/x/sys v0.0.0-20220111092808-5a964db01320
 	google.golang.org/genproto v0.0.0-20191216205247-b31c10ee225f // indirect
-	google.golang.org/grpc v1.25.1
+	google.golang.org/protobuf v1.28.0 // indirect
 	gopkg.in/ini.v1 v1.51.1 // indirect
 	gopkg.in/yaml.v2 v2.4.0 // indirect
 	gopkg.in/yaml.v3 v3.0.0-20210107192922-496545a6307b // indirect
